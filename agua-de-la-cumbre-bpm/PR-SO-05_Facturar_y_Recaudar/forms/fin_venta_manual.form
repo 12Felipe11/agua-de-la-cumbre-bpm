@@ -1,0 +1,71 @@
+{
+  "id": "fin_venta_manual",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "3.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Registrar una venta (normalmente llega desde PR-CO-03)"
+    },
+    {
+      "key": "pedidoId",
+      "label": "Pedido / documento",
+      "type": "textfield",
+      "validate": {
+        "required": true
+      },
+      "id": "Field_pedidoId",
+      "defaultValue": "VTA-001"
+    },
+    {
+      "key": "clienteId",
+      "label": "Cliente",
+      "type": "textfield",
+      "validate": {
+        "required": true
+      },
+      "id": "Field_clienteId",
+      "defaultValue": "CLI-001"
+    },
+    {
+      "key": "canal",
+      "label": "Canal de venta",
+      "type": "select",
+      "validate": {
+        "required": true
+      },
+      "values": [
+        {
+          "label": "Directo (venta al cliente)",
+          "value": "DIRECTO"
+        },
+        {
+          "label": "Indirecto (distribuidor: intercambio de envases)",
+          "value": "DISTRIBUIDOR"
+        }
+      ],
+      "id": "Field_canal",
+      "defaultValue": "DIRECTO"
+    },
+    {
+      "key": "valorVenta",
+      "label": "Valor de la venta (COP)",
+      "type": "number",
+      "decimalDigits": 0,
+      "increment": "1",
+      "validate": {
+        "required": true,
+        "min": 1
+      },
+      "id": "Field_valorVenta",
+      "defaultValue": 20000
+    }
+  ]
+}

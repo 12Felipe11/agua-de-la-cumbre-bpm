@@ -1,0 +1,69 @@
+{
+  "id": "fin_pago",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "1.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Registrar recaudo / pago a proveedor"
+    },
+    {
+      "key": "documentoId",
+      "label": "Documento",
+      "type": "textfield",
+      "id": "Field_documentoId",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "key": "tipoOperacion",
+      "label": "Operación",
+      "type": "textfield",
+      "id": "Field_tipoOperacion",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "key": "saldo",
+      "label": "Saldo pendiente COP",
+      "type": "number",
+      "id": "Field_saldo",
+      "validate": {
+        "min": 0
+      },
+      "disabled": true,
+      "decimalDigits": 0,
+      "increment": "1"
+    },
+    {
+      "key": "pago",
+      "label": "Abono o pago COP",
+      "type": "number",
+      "id": "Field_pago",
+      "validate": {
+        "min": 1,
+        "required": true
+      },
+      "decimalDigits": 0,
+      "increment": "1",
+      "defaultValue": 20000
+    },
+    {
+      "key": "comprobantePago",
+      "label": "Referencia única de comprobante",
+      "type": "textfield",
+      "id": "Field_comprobantePago",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "REC-001"
+    }
+  ]
+}

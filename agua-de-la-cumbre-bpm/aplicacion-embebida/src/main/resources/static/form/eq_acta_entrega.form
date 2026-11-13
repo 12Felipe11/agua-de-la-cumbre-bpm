@@ -1,0 +1,44 @@
+{
+  "id": "eq_acta_entrega",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "1.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Preparar y entregar equipo"
+    },
+    {
+      "key": "equipoId",
+      "label": "Equipo",
+      "type": "textfield",
+      "id": "Field_equipoId",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "key": "responsableId",
+      "label": "Responsable",
+      "type": "textfield",
+      "id": "Field_responsableId",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "key": "actaEntrega",
+      "label": "Acta de entrega firmada",
+      "type": "textfield",
+      "id": "Field_actaEntrega",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "ACTA-ENT-001"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "id": "fin_cobro",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "3.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Gestionar el cobro de la cuenta vencida"
+    },
+    {
+      "key": "documentoId",
+      "label": "Documento",
+      "type": "textfield",
+      "disabled": true,
+      "id": "Field_documentoId",
+      "validate": {}
+    },
+    {
+      "key": "clienteId",
+      "label": "Cliente",
+      "type": "textfield",
+      "disabled": true,
+      "id": "Field_clienteId",
+      "validate": {}
+    },
+    {
+      "key": "saldo",
+      "label": "Saldo COP",
+      "type": "number",
+      "disabled": true,
+      "id": "Field_saldo",
+      "validate": {}
+    },
+    {
+      "key": "accionCobro",
+      "label": "Acción de cobro (DMN)",
+      "type": "textfield",
+      "disabled": true,
+      "id": "Field_accionCobro",
+      "validate": {}
+    },
+    {
+      "key": "observacionSeguimiento",
+      "label": "Gestión realizada",
+      "type": "textarea",
+      "validate": {
+        "required": true
+      },
+      "id": "Field_observacionSeguimiento",
+      "defaultValue": "Se envió recordatorio de pago al cliente"
+    }
+  ]
+}

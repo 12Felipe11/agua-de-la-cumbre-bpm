@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_conciliar_cartera" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.52.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.24.0">
+  <bpmn:collaboration id="Collab_conciliar_cartera">
+    <bpmn:participant id="Participant_conciliar_cartera" name="PR-SO-05 (subproceso) Conciliar la cartera" processRef="conciliar_cartera" />
+  </bpmn:collaboration>
+  <bpmn:process id="conciliar_cartera" name="Conciliar la cartera" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:laneSet id="LaneSet_conciliar_cartera">
+      <bpmn:lane id="Lane_Fin" name="Responsable Administrativo y Financiero">
+        <bpmn:flowNodeRef>s</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>validar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>aplicar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>clasif</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>e</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="s" name="Pago registrado"><bpmn:outgoing>Flow_conciliar_cartera_1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:serviceTask id="validar" name="Validar el valor y el comprobante del pago" camunda:class="com.aguacumbre.delegate.ValidarPagoDelegate"><bpmn:incoming>Flow_conciliar_cartera_1</bpmn:incoming><bpmn:outgoing>Flow_conciliar_cartera_2</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:serviceTask id="aplicar" name="Aplicar el abono al saldo" camunda:delegateExpression="${carteraDelegate}"><bpmn:documentation>Solo aplica el abono si pagoValido = true y el comprobante no se ha usado; si no, deja el saldo sin cambios.</bpmn:documentation><bpmn:extensionElements><camunda:inputOutput><camunda:inputParameter name="accion">abono</camunda:inputParameter></camunda:inputOutput></bpmn:extensionElements><bpmn:incoming>Flow_conciliar_cartera_2</bpmn:incoming><bpmn:outgoing>Flow_conciliar_cartera_3</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:businessRuleTask id="clasif" name="Clasificar el estado de la cartera" camunda:resultVariable="estadoCartera" camunda:decisionRef="estado_cartera" camunda:decisionRefBinding="deployment" camunda:mapDecisionResult="singleEntry"><bpmn:incoming>Flow_conciliar_cartera_3</bpmn:incoming><bpmn:outgoing>Flow_conciliar_cartera_4</bpmn:outgoing></bpmn:businessRuleTask>
+    <bpmn:endEvent id="e" name="Cartera actualizada"><bpmn:incoming>Flow_conciliar_cartera_4</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_conciliar_cartera_1" sourceRef="s" targetRef="validar" />
+    <bpmn:sequenceFlow id="Flow_conciliar_cartera_2" sourceRef="validar" targetRef="aplicar" />
+    <bpmn:sequenceFlow id="Flow_conciliar_cartera_3" sourceRef="aplicar" targetRef="clasif" />
+    <bpmn:sequenceFlow id="Flow_conciliar_cartera_4" sourceRef="clasif" targetRef="e" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_conciliar_cartera">
+    <bpmndi:BPMNPlane id="Plane_conciliar_cartera" bpmnElement="Collab_conciliar_cartera">
+      <bpmndi:BPMNShape id="Participant_conciliar_cartera_di" bpmnElement="Participant_conciliar_cartera" isHorizontal="true"><dc:Bounds x="160" y="80" width="990" height="190" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Fin_di" bpmnElement="Lane_Fin" isHorizontal="true"><dc:Bounds x="190" y="80" width="960" height="190" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="s_di" bpmnElement="s"><dc:Bounds x="277" y="122" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="240" y="160" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="validar_di" bpmnElement="validar"><dc:Bounds x="410" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="aplicar_di" bpmnElement="aplicar"><dc:Bounds x="590" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="clasif_di" bpmnElement="clasif"><dc:Bounds x="770" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="e_di" bpmnElement="e"><dc:Bounds x="997" y="122" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="960" y="160" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_conciliar_cartera_1_di" bpmnElement="Flow_conciliar_cartera_1"><di:waypoint x="313" y="140" /><di:waypoint x="410" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_conciliar_cartera_2_di" bpmnElement="Flow_conciliar_cartera_2"><di:waypoint x="540" y="140" /><di:waypoint x="590" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_conciliar_cartera_3_di" bpmnElement="Flow_conciliar_cartera_3"><di:waypoint x="720" y="140" /><di:waypoint x="770" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_conciliar_cartera_4_di" bpmnElement="Flow_conciliar_cartera_4"><di:waypoint x="900" y="140" /><di:waypoint x="997" y="140" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

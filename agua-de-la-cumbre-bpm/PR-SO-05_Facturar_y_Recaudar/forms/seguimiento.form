@@ -1,0 +1,23 @@
+{
+  "id": "seguimiento",
+  "type": "default",
+  "schemaVersion": 16,
+  "components": [
+    {
+      "type": "text",
+      "id": "title",
+      "text": "Autorización pendiente"
+    },
+    {
+      "type": "textarea",
+      "key": "observacionSeguimiento",
+      "id": "observacionSeguimiento",
+      "label": "Observación de seguimiento",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "Gestión realizada y comunicada"
+    }
+  ],
+  "executionPlatformVersion": "7.24.0"
+}

@@ -1,0 +1,44 @@
+{
+  "id": "eq_diagnostico",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "3.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Diagnosticar el equipo"
+    },
+    {
+      "key": "equipoId",
+      "label": "Equipo",
+      "type": "textfield",
+      "disabled": true,
+      "id": "Field_equipoId",
+      "validate": {}
+    },
+    {
+      "key": "actaDevolucion",
+      "label": "Acta de devolución",
+      "type": "textfield",
+      "disabled": true,
+      "id": "Field_actaDevolucion",
+      "validate": {}
+    },
+    {
+      "key": "diagnostico",
+      "label": "Diagnóstico técnico",
+      "type": "textarea",
+      "validate": {
+        "required": true
+      },
+      "id": "Field_diagnostico",
+      "defaultValue": "Requiere limpieza y cambio de empaque"
+    }
+  ]
+}

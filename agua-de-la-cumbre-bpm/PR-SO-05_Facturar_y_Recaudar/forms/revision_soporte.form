@@ -1,0 +1,49 @@
+{
+  "id": "revision_soporte",
+  "type": "default",
+  "schemaVersion": 16,
+  "components": [
+    {
+      "type": "text",
+      "id": "title",
+      "text": "Revisar soporte"
+    },
+    {
+      "type": "textfield",
+      "key": "procesoOrigen",
+      "id": "procesoOrigen",
+      "label": "Proceso",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "type": "textfield",
+      "key": "referenciaOperacion",
+      "id": "referenciaOperacion",
+      "label": "Referencia",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "type": "textfield",
+      "key": "soporteReferencia",
+      "id": "soporteReferencia",
+      "label": "Referencia del soporte",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "F-AC-PT-002"
+    },
+    {
+      "type": "textarea",
+      "key": "observacionesSoporte",
+      "id": "observacionesSoporte",
+      "label": "Observaciones",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "Salida y comprobante de entrega verificados"
+    }
+  ],
+  "executionPlatformVersion": "7.24.0"
+}

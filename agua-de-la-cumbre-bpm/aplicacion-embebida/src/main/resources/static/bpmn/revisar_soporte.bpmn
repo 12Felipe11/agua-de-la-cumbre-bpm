@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_soporte" targetNamespace="https://aguacumbre.example/bpm">
+  <bpmn:process id="revisar_soporte" name="Revisar soporte documental" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:startEvent id="soporte_start" name="Solicitud recibida" />
+    <bpmn:userTask id="soporte_revisar" name="Revisar soporte documental" camunda:candidateGroups="administracion" camunda:formRef="revision_soporte" camunda:formRefBinding="deployment" />
+    <bpmn:endEvent id="soporte_end" name="Soporte revisado" />
+    <bpmn:sequenceFlow id="s1" sourceRef="soporte_start" targetRef="soporte_revisar" />
+    <bpmn:sequenceFlow id="s2" sourceRef="soporte_revisar" targetRef="soporte_end" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="soporte_di">
+    <bpmndi:BPMNPlane id="soporte_plane" bpmnElement="revisar_soporte">
+      <bpmndi:BPMNShape id="soporte_start_di" bpmnElement="soporte_start">
+        <dc:Bounds x="100" y="100" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="soporte_revisar_di" bpmnElement="soporte_revisar">
+        <dc:Bounds x="220" y="80" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="soporte_end_di" bpmnElement="soporte_end">
+        <dc:Bounds x="460" y="100" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="s1_di" bpmnElement="s1">
+        <di:waypoint x="136" y="118" />
+        <di:waypoint x="220" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="s2_di" bpmnElement="s2">
+        <di:waypoint x="370" y="118" />
+        <di:waypoint x="460" y="118" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,58 @@
+{
+  "id": "dist_preparar",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "1.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Preparar pedido por zona"
+    },
+    {
+      "key": "pedidoId",
+      "label": "Pedido",
+      "type": "textfield",
+      "id": "Field_pedidoId",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "key": "cantidad",
+      "label": "Unidades",
+      "type": "number",
+      "id": "Field_cantidad",
+      "validate": {
+        "min": 0
+      },
+      "disabled": true,
+      "decimalDigits": 0,
+      "increment": "1"
+    },
+    {
+      "key": "vendedorId",
+      "label": "Vendedor responsable",
+      "type": "textfield",
+      "id": "Field_vendedorId",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "VEN-001"
+    },
+    {
+      "key": "zona",
+      "label": "Zona y dirección de entrega",
+      "type": "textfield",
+      "id": "Field_zona",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "Centro - Villavicencio"
+    }
+  ]
+}

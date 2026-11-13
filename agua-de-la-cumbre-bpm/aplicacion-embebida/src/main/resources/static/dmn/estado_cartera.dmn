@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Def_estado_cartera" name="Clasificar el estado de la cartera" namespace="https://aguacumbre.example/dmn">
+  <decision id="estado_cartera" name="Clasificar el estado de la cartera" camunda:historyTimeToLive="180">
+    <description>Adaptada de estado_cartera (saldo): agrega pagoValido y cubre saldo negativo.</description>
+    <decisionTable id="Table_estado_cartera" hitPolicy="UNIQUE">
+      <input id="estado_cartera_in0" label="Pago válido"><inputExpression id="estado_cartera_expr0" typeRef="boolean"><text>pagoValido</text></inputExpression></input>
+      <input id="estado_cartera_in1" label="Saldo COP"><inputExpression id="estado_cartera_expr1" typeRef="long"><text>saldo</text></inputExpression></input>
+      <output id="estado_cartera_out" label="Estado" name="estado" typeRef="string" />
+      <rule id="estado_cartera_rule0">
+        <description>El valor o el comprobante no cuadran: revisar y corregir el registro</description>
+        <inputEntry id="estado_cartera_r0i0"><text>false</text></inputEntry>
+        <inputEntry id="estado_cartera_r0i1"><text>-</text></inputEntry>
+        <outputEntry id="estado_cartera_r0o"><text>"REVISAR"</text></outputEntry>
+      </rule>
+      <rule id="estado_cartera_rule1">
+        <description>Queda saldo por cobrar</description>
+        <inputEntry id="estado_cartera_r1i0"><text>true</text></inputEntry>
+        <inputEntry id="estado_cartera_r1i1"><text>&gt; 0</text></inputEntry>
+        <outputEntry id="estado_cartera_r1o"><text>"PENDIENTE"</text></outputEntry>
+      </rule>
+      <rule id="estado_cartera_rule2">
+        <description>Cuenta saldada</description>
+        <inputEntry id="estado_cartera_r2i0"><text>true</text></inputEntry>
+        <inputEntry id="estado_cartera_r2i1"><text>&lt;= 0</text></inputEntry>
+        <outputEntry id="estado_cartera_r2o"><text>"CERRADA"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

@@ -1,0 +1,38 @@
+{
+  "id": "eq_solicitud",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "3.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Solicitud de equipo de campo"
+    },
+    {
+      "key": "equipoId",
+      "label": "Equipo (EQ-001, EQ-002 o EQ-003)",
+      "type": "textfield",
+      "validate": {
+        "required": true
+      },
+      "id": "Field_equipoId",
+      "defaultValue": "EQ-001"
+    },
+    {
+      "key": "responsableId",
+      "label": "Cliente o vendedor que lo solicita",
+      "type": "textfield",
+      "validate": {
+        "required": true
+      },
+      "id": "Field_responsableId",
+      "defaultValue": "VEN-001"
+    }
+  ]
+}

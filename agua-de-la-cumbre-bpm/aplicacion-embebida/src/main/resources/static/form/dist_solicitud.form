@@ -1,0 +1,38 @@
+{
+  "id": "dist_solicitud",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "3.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Pedido recibido del cliente o distribuidor"
+    },
+    {
+      "key": "pedidoId",
+      "label": "Pedido único (será el documento de cartera)",
+      "type": "textfield",
+      "validate": {
+        "required": true
+      },
+      "id": "Field_pedidoId",
+      "defaultValue": "PED-001"
+    },
+    {
+      "key": "clienteId",
+      "label": "Cliente o distribuidor",
+      "type": "textfield",
+      "validate": {
+        "required": true
+      },
+      "id": "Field_clienteId",
+      "defaultValue": "CLI-001"
+    }
+  ]
+}

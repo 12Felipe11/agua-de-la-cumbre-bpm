@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_facturar_recaudar" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.52.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.24.0">
+  <bpmn:message id="Message_VentaEntregada" name="VentaEntregada" />
+  <bpmn:message id="Message_FacturaEnviada" name="FacturaEnviada" />
+  <bpmn:message id="Message_PagoRecibido" name="PagoRecibido" />
+  <bpmn:collaboration id="Collab_facturar_recaudar">
+    <bpmn:participant id="Participant_facturar_recaudar" name="PR-SO-05 Facturar y Recaudar las Ventas (Cartera)" processRef="facturar_recaudar" />
+    <bpmn:participant id="Ext_Cli" name="Cliente" />
+    <bpmn:messageFlow id="Msg_facturar_recaudar_1" name="Factura" sourceRef="enviar" targetRef="Ext_Cli" />
+    <bpmn:messageFlow id="Msg_facturar_recaudar_2" name="Pago" sourceRef="Ext_Cli" targetRef="pago" />
+  </bpmn:collaboration>
+  <bpmn:process id="facturar_recaudar" name="PR-SO-05 Facturar y Recaudar las Ventas (Cartera)" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:laneSet id="LaneSet_facturar_recaudar">
+      <bpmn:lane id="Lane_Fin" name="Responsable Administrativo y Financiero">
+        <bpmn:flowNodeRef>s</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>s0</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>soporte</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>registrar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>factura</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>enviar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>cxc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>eb</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>pago</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>vence</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>regpago</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>concil</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>reporte</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>e1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>corregir</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>accion</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>cobro</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="s" name="Venta recibida de PR-CO-03"><bpmn:outgoing>Flow_facturar_recaudar_1</bpmn:outgoing><bpmn:messageEventDefinition id="MED_s" messageRef="Message_VentaEntregada" /></bpmn:startEvent>
+    <bpmn:startEvent id="s0" name="Venta registrada manualmente" camunda:formRef="fin_venta_manual" camunda:formRefBinding="latest"><bpmn:outgoing>Flow_facturar_recaudar_2</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:callActivity id="soporte" name="Revisar el soporte de la venta" calledElement="revisar_soporte" camunda:calledElementBinding="latest"><bpmn:extensionElements><camunda:in sourceExpression="{'facturar_recaudar'}" target="procesoOrigen" /><camunda:in source="pedidoId" target="referenciaOperacion" /><camunda:out source="soporteReferencia" target="soporteReferencia" /><camunda:out source="observacionesSoporte" target="observacionesSoporte" /></bpmn:extensionElements><bpmn:incoming>Flow_facturar_recaudar_1</bpmn:incoming><bpmn:incoming>Flow_facturar_recaudar_2</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_3</bpmn:outgoing></bpmn:callActivity>
+    <bpmn:serviceTask id="registrar" name="Registrar la venta en la cuenta del cliente" camunda:type="external" camunda:topic="registrar-venta"><bpmn:incoming>Flow_facturar_recaudar_3</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_4</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:serviceTask id="factura" name="Generar la factura" camunda:type="external" camunda:topic="generar-factura"><bpmn:incoming>Flow_facturar_recaudar_4</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_5</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:parallelGateway id="a1"><bpmn:incoming>Flow_facturar_recaudar_5</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_6</bpmn:outgoing><bpmn:outgoing>Flow_facturar_recaudar_7</bpmn:outgoing></bpmn:parallelGateway>
+    <bpmn:intermediateThrowEvent id="enviar" name="Enviar la factura al cliente (JavaScript)"><bpmn:incoming>Flow_facturar_recaudar_7</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_9</bpmn:outgoing><bpmn:messageEventDefinition id="MED_enviar" messageRef="Message_FacturaEnviada" camunda:type="external" camunda:topic="enviar-factura" /></bpmn:intermediateThrowEvent>
+    <bpmn:serviceTask id="cxc" name="Registrar la cuenta por cobrar" camunda:type="external" camunda:topic="registrar-cuenta-por-cobrar"><bpmn:incoming>Flow_facturar_recaudar_6</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_8</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:parallelGateway id="a2"><bpmn:incoming>Flow_facturar_recaudar_8</bpmn:incoming><bpmn:incoming>Flow_facturar_recaudar_9</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_10</bpmn:outgoing></bpmn:parallelGateway>
+    <bpmn:eventBasedGateway id="eb"><bpmn:incoming>Flow_facturar_recaudar_10</bpmn:incoming><bpmn:incoming>Flow_facturar_recaudar_17</bpmn:incoming><bpmn:incoming>Flow_facturar_recaudar_23</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_11</bpmn:outgoing><bpmn:outgoing>Flow_facturar_recaudar_12</bpmn:outgoing></bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="pago" name="Pago recibido del cliente"><bpmn:incoming>Flow_facturar_recaudar_11</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_13</bpmn:outgoing><bpmn:messageEventDefinition id="MED_pago" messageRef="Message_PagoRecibido" /></bpmn:intermediateCatchEvent>
+    <bpmn:intermediateCatchEvent id="vence" name="Vence el plazo de pago"><bpmn:documentation>Plazo configurable en application.yaml (agua.plazos.pago). Valor propuesto para operación: P30D.</bpmn:documentation><bpmn:incoming>Flow_facturar_recaudar_12</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_21</bpmn:outgoing><bpmn:timerEventDefinition id="TED_vence"><bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${plazoPago}</bpmn:timeDuration></bpmn:timerEventDefinition></bpmn:intermediateCatchEvent>
+    <bpmn:userTask id="regpago" name="Registrar el pago" camunda:formRef="fin_pago" camunda:formRefBinding="latest" camunda:candidateGroups="tesoreria"><bpmn:incoming>Flow_facturar_recaudar_13</bpmn:incoming><bpmn:incoming>Flow_facturar_recaudar_20</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_14</bpmn:outgoing></bpmn:userTask>
+    <bpmn:callActivity id="concil" name="Conciliar y actualizar la cartera" calledElement="conciliar_cartera" camunda:calledElementBinding="latest"><bpmn:extensionElements><camunda:in variables="all" /><camunda:out variables="all" /></bpmn:extensionElements><bpmn:incoming>Flow_facturar_recaudar_14</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_15</bpmn:outgoing></bpmn:callActivity>
+    <bpmn:exclusiveGateway id="g1" name="¿Estado de la cartera?" default="Flow_facturar_recaudar_18"><bpmn:incoming>Flow_facturar_recaudar_15</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_16</bpmn:outgoing><bpmn:outgoing>Flow_facturar_recaudar_17</bpmn:outgoing><bpmn:outgoing>Flow_facturar_recaudar_18</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:userTask id="reporte" name="Reportar el estado de cartera" camunda:formRef="fin_reporte" camunda:formRefBinding="latest" camunda:candidateGroups="administracion"><bpmn:incoming>Flow_facturar_recaudar_16</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_19</bpmn:outgoing></bpmn:userTask>
+    <bpmn:endEvent id="e1" name="Cuenta saldada y cartera conciliada"><bpmn:incoming>Flow_facturar_recaudar_19</bpmn:incoming></bpmn:endEvent>
+    <bpmn:userTask id="corregir" name="Revisar diferencias y corregir el registro" camunda:formRef="seguimiento" camunda:formRefBinding="latest" camunda:candidateGroups="tesoreria"><bpmn:incoming>Flow_facturar_recaudar_18</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_20</bpmn:outgoing></bpmn:userTask>
+    <bpmn:businessRuleTask id="accion" name="Definir la acción de cobro" camunda:resultVariable="accionCobro" camunda:decisionRef="accion_cobro" camunda:decisionRefBinding="latest" camunda:mapDecisionResult="singleEntry"><bpmn:incoming>Flow_facturar_recaudar_21</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_22</bpmn:outgoing></bpmn:businessRuleTask>
+    <bpmn:userTask id="cobro" name="Gestionar el cobro de la cuenta vencida" camunda:formRef="fin_cobro" camunda:formRefBinding="latest" camunda:candidateGroups="tesoreria"><bpmn:incoming>Flow_facturar_recaudar_22</bpmn:incoming><bpmn:outgoing>Flow_facturar_recaudar_23</bpmn:outgoing></bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_1" sourceRef="s" targetRef="soporte" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_2" sourceRef="s0" targetRef="soporte" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_3" sourceRef="soporte" targetRef="registrar" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_4" sourceRef="registrar" targetRef="factura" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_5" sourceRef="factura" targetRef="a1" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_6" sourceRef="a1" targetRef="cxc" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_7" sourceRef="a1" targetRef="enviar" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_8" sourceRef="cxc" targetRef="a2" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_9" sourceRef="enviar" targetRef="a2" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_10" sourceRef="a2" targetRef="eb" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_11" sourceRef="eb" targetRef="pago" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_12" sourceRef="eb" targetRef="vence" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_13" sourceRef="pago" targetRef="regpago" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_14" sourceRef="regpago" targetRef="concil" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_15" sourceRef="concil" targetRef="g1" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_16" name="Cerrada" sourceRef="g1" targetRef="reporte"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${estadoCartera == 'CERRADA'}</bpmn:conditionExpression></bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_17" name="Pendiente" sourceRef="g1" targetRef="eb"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${estadoCartera == 'PENDIENTE'}</bpmn:conditionExpression></bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_18" name="Revisar" sourceRef="g1" targetRef="corregir" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_19" sourceRef="reporte" targetRef="e1" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_20" sourceRef="corregir" targetRef="regpago" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_21" sourceRef="vence" targetRef="accion" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_22" sourceRef="accion" targetRef="cobro" />
+    <bpmn:sequenceFlow id="Flow_facturar_recaudar_23" sourceRef="cobro" targetRef="eb" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_facturar_recaudar">
+    <bpmndi:BPMNPlane id="Plane_facturar_recaudar" bpmnElement="Collab_facturar_recaudar">
+      <bpmndi:BPMNShape id="Participant_facturar_recaudar_di" bpmnElement="Participant_facturar_recaudar" isHorizontal="true"><dc:Bounds x="160" y="200" width="2610" height="344" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Fin_di" bpmnElement="Lane_Fin" isHorizontal="true"><dc:Bounds x="190" y="200" width="2580" height="344" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="s_di" bpmnElement="s"><dc:Bounds x="277" y="242" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="240" y="280" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="s0_di" bpmnElement="s0"><dc:Bounds x="277" y="354" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="240" y="392" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="soporte_di" bpmnElement="soporte"><dc:Bounds x="410" y="220" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="registrar_di" bpmnElement="registrar"><dc:Bounds x="590" y="220" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="factura_di" bpmnElement="factura"><dc:Bounds x="770" y="220" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="a1_di" bpmnElement="a1"><dc:Bounds x="990" y="235" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="enviar_di" bpmnElement="enviar"><dc:Bounds x="1177" y="242" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1140" y="280" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cxc_di" bpmnElement="cxc"><dc:Bounds x="1130" y="332" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="a2_di" bpmnElement="a2"><dc:Bounds x="1350" y="235" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="eb_di" bpmnElement="eb"><dc:Bounds x="1530" y="235" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="pago_di" bpmnElement="pago"><dc:Bounds x="1717" y="242" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1680" y="280" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="vence_di" bpmnElement="vence"><dc:Bounds x="1717" y="466" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1680" y="504" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="regpago_di" bpmnElement="regpago"><dc:Bounds x="1850" y="220" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="concil_di" bpmnElement="concil"><dc:Bounds x="2030" y="220" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="g1_di" bpmnElement="g1" isMarkerVisible="true"><dc:Bounds x="2250" y="235" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="2140" y="288" width="110" height="34" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="reporte_di" bpmnElement="reporte"><dc:Bounds x="2390" y="220" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="e1_di" bpmnElement="e1"><dc:Bounds x="2617" y="242" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="2580" y="280" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="corregir_di" bpmnElement="corregir"><dc:Bounds x="2390" y="332" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="accion_di" bpmnElement="accion"><dc:Bounds x="1850" y="444" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cobro_di" bpmnElement="cobro"><dc:Bounds x="2030" y="444" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_1_di" bpmnElement="Flow_facturar_recaudar_1"><di:waypoint x="313" y="260" /><di:waypoint x="410" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_2_di" bpmnElement="Flow_facturar_recaudar_2"><di:waypoint x="313" y="372" /><di:waypoint x="361" y="372" /><di:waypoint x="361" y="260" /><di:waypoint x="410" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_3_di" bpmnElement="Flow_facturar_recaudar_3"><di:waypoint x="540" y="260" /><di:waypoint x="590" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_4_di" bpmnElement="Flow_facturar_recaudar_4"><di:waypoint x="720" y="260" /><di:waypoint x="770" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_5_di" bpmnElement="Flow_facturar_recaudar_5"><di:waypoint x="900" y="260" /><di:waypoint x="990" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_6_di" bpmnElement="Flow_facturar_recaudar_6"><di:waypoint x="1015" y="285" /><di:waypoint x="1015" y="372" /><di:waypoint x="1130" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_7_di" bpmnElement="Flow_facturar_recaudar_7"><di:waypoint x="1040" y="260" /><di:waypoint x="1177" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_8_di" bpmnElement="Flow_facturar_recaudar_8"><di:waypoint x="1260" y="372" /><di:waypoint x="1305" y="372" /><di:waypoint x="1305" y="260" /><di:waypoint x="1350" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_9_di" bpmnElement="Flow_facturar_recaudar_9"><di:waypoint x="1213" y="260" /><di:waypoint x="1350" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_10_di" bpmnElement="Flow_facturar_recaudar_10"><di:waypoint x="1400" y="260" /><di:waypoint x="1530" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_11_di" bpmnElement="Flow_facturar_recaudar_11"><di:waypoint x="1580" y="260" /><di:waypoint x="1717" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_12_di" bpmnElement="Flow_facturar_recaudar_12"><di:waypoint x="1555" y="285" /><di:waypoint x="1555" y="484" /><di:waypoint x="1717" y="484" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_13_di" bpmnElement="Flow_facturar_recaudar_13"><di:waypoint x="1753" y="260" /><di:waypoint x="1850" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_14_di" bpmnElement="Flow_facturar_recaudar_14"><di:waypoint x="1980" y="260" /><di:waypoint x="2030" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_15_di" bpmnElement="Flow_facturar_recaudar_15"><di:waypoint x="2160" y="260" /><di:waypoint x="2250" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_16_di" bpmnElement="Flow_facturar_recaudar_16"><di:waypoint x="2300" y="260" /><di:waypoint x="2390" y="260" /><bpmndi:BPMNLabel><dc:Bounds x="2306" y="242" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_17_di" bpmnElement="Flow_facturar_recaudar_17"><di:waypoint x="2275" y="235" /><di:waypoint x="2275" y="210" /><di:waypoint x="1555" y="210" /><di:waypoint x="1555" y="235" /><bpmndi:BPMNLabel><dc:Bounds x="1569" y="194" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_18_di" bpmnElement="Flow_facturar_recaudar_18"><di:waypoint x="2275" y="285" /><di:waypoint x="2275" y="372" /><di:waypoint x="2390" y="372" /><bpmndi:BPMNLabel><dc:Bounds x="2283" y="354" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_19_di" bpmnElement="Flow_facturar_recaudar_19"><di:waypoint x="2520" y="260" /><di:waypoint x="2617" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_20_di" bpmnElement="Flow_facturar_recaudar_20"><di:waypoint x="2455" y="412" /><di:waypoint x="2455" y="438" /><di:waypoint x="1915" y="438" /><di:waypoint x="1915" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_21_di" bpmnElement="Flow_facturar_recaudar_21"><di:waypoint x="1753" y="484" /><di:waypoint x="1850" y="484" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_22_di" bpmnElement="Flow_facturar_recaudar_22"><di:waypoint x="1980" y="484" /><di:waypoint x="2030" y="484" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_facturar_recaudar_23_di" bpmnElement="Flow_facturar_recaudar_23"><di:waypoint x="2095" y="524" /><di:waypoint x="2095" y="564" /><di:waypoint x="1555" y="564" /><di:waypoint x="1555" y="285" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Ext_Cli_di" bpmnElement="Ext_Cli" isHorizontal="true"><dc:Bounds x="160" y="30" width="2610" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Msg_facturar_recaudar_1_di" bpmnElement="Msg_facturar_recaudar_1"><di:waypoint x="1209" y="242" /><di:waypoint x="1209" y="80" /><bpmndi:BPMNLabel><dc:Bounds x="1214" y="88" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Msg_facturar_recaudar_2_di" bpmnElement="Msg_facturar_recaudar_2"><di:waypoint x="1721" y="80" /><di:waypoint x="1721" y="242" /><bpmndi:BPMNLabel><dc:Bounds x="1726" y="88" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

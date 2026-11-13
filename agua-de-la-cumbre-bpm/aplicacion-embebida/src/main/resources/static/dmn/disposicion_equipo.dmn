@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Def_disposicion_equipo" name="Definir la disposición del equipo" namespace="https://aguacumbre.example/dmn">
+  <decision id="disposicion_equipo" name="Definir la disposición del equipo" camunda:historyTimeToLive="180">
+    <decisionTable id="Table_disposicion_equipo" hitPolicy="UNIQUE">
+      <input id="disposicion_equipo_in0" label="Equipo apto y saneado"><inputExpression id="disposicion_equipo_expr0" typeRef="boolean"><text>equipoApto</text></inputExpression></input>
+      <output id="disposicion_equipo_out" label="Disposición" name="disposicion" typeRef="string" />
+      <rule id="disposicion_equipo_rule0">
+        <description>Equipo apto: vuelve al inventario como disponible</description>
+        <inputEntry id="disposicion_equipo_r0i0"><text>true</text></inputEntry>
+        <outputEntry id="disposicion_equipo_r0o"><text>"REINTEGRAR"</text></outputEntry>
+      </rule>
+      <rule id="disposicion_equipo_rule1">
+        <description>El equipo requiere mantenimiento antes de reintegrarse</description>
+        <inputEntry id="disposicion_equipo_r1i0"><text>false</text></inputEntry>
+        <outputEntry id="disposicion_equipo_r1o"><text>"MANTENIMIENTO"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

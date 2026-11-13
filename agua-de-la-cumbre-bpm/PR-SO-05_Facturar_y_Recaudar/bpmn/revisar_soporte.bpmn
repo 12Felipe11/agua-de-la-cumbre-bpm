@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_revisar_soporte" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.52.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.24.0">
+  <bpmn:collaboration id="Collab_revisar_soporte">
+    <bpmn:participant id="Participant_revisar_soporte" name="PR-SO-05 (subproceso) Revisar soporte documental" processRef="revisar_soporte" />
+  </bpmn:collaboration>
+  <bpmn:process id="revisar_soporte" name="PR-SO-05 (subproceso) Revisar soporte documental" isExecutable="true" camunda:historyTimeToLive="180" camunda:isStartableInTasklist="false">
+    <bpmn:laneSet id="LaneSet_revisar_soporte">
+      <bpmn:lane id="Lane_Adm" name="Administración">
+        <bpmn:flowNodeRef>s</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>soporte_revisar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>e</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="s" name="Solicitud recibida"><bpmn:outgoing>Flow_revisar_soporte_1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:userTask id="soporte_revisar" name="Revisar soporte documental" camunda:formRef="revision_soporte" camunda:formRefBinding="latest" camunda:candidateGroups="administracion"><bpmn:incoming>Flow_revisar_soporte_1</bpmn:incoming><bpmn:outgoing>Flow_revisar_soporte_2</bpmn:outgoing></bpmn:userTask>
+    <bpmn:endEvent id="e" name="Soporte revisado"><bpmn:incoming>Flow_revisar_soporte_2</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_revisar_soporte_1" sourceRef="s" targetRef="soporte_revisar" />
+    <bpmn:sequenceFlow id="Flow_revisar_soporte_2" sourceRef="soporte_revisar" targetRef="e" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_revisar_soporte">
+    <bpmndi:BPMNPlane id="Plane_revisar_soporte" bpmnElement="Collab_revisar_soporte">
+      <bpmndi:BPMNShape id="Participant_revisar_soporte_di" bpmnElement="Participant_revisar_soporte" isHorizontal="true"><dc:Bounds x="160" y="80" width="630" height="190" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Adm_di" bpmnElement="Lane_Adm" isHorizontal="true"><dc:Bounds x="190" y="80" width="600" height="190" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="s_di" bpmnElement="s"><dc:Bounds x="277" y="122" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="240" y="160" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="soporte_revisar_di" bpmnElement="soporte_revisar"><dc:Bounds x="410" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="e_di" bpmnElement="e"><dc:Bounds x="637" y="122" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="600" y="160" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_revisar_soporte_1_di" bpmnElement="Flow_revisar_soporte_1"><di:waypoint x="313" y="140" /><di:waypoint x="410" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_revisar_soporte_2_di" bpmnElement="Flow_revisar_soporte_2"><di:waypoint x="540" y="140" /><di:waypoint x="637" y="140" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

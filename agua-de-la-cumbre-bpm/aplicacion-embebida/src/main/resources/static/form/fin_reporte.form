@@ -1,0 +1,60 @@
+{
+  "id": "fin_reporte",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "3.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Reportar el estado de cartera"
+    },
+    {
+      "key": "documentoId",
+      "label": "Documento",
+      "type": "textfield",
+      "disabled": true,
+      "id": "Field_documentoId",
+      "validate": {}
+    },
+    {
+      "key": "numeroFactura",
+      "label": "Factura",
+      "type": "textfield",
+      "disabled": true,
+      "id": "Field_numeroFactura",
+      "validate": {}
+    },
+    {
+      "key": "saldo",
+      "label": "Saldo COP",
+      "type": "number",
+      "disabled": true,
+      "id": "Field_saldo",
+      "validate": {}
+    },
+    {
+      "key": "estadoCartera",
+      "label": "Estado",
+      "type": "textfield",
+      "disabled": true,
+      "id": "Field_estadoCartera",
+      "validate": {}
+    },
+    {
+      "key": "observacionesReporte",
+      "label": "Reporte del estado de cartera",
+      "type": "textarea",
+      "validate": {
+        "required": true
+      },
+      "id": "Field_observacionesReporte",
+      "defaultValue": "Cuenta saldada y cartera conciliada"
+    }
+  ]
+}

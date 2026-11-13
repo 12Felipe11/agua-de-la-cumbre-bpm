@@ -1,0 +1,6 @@
+node_modules/
+aplicacion-embebida/target/
+aplicacion-embebida/data/
+*.log
+.idea/
+.vscode/

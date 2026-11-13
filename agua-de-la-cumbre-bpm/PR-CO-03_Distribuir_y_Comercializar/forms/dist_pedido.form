@@ -1,0 +1,110 @@
+{
+  "id": "dist_pedido",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "1.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Registrar el pedido del cliente o distribuidor"
+    },
+    {
+      "key": "pedidoId",
+      "label": "Pedido",
+      "type": "textfield",
+      "id": "Field_pedidoId",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "key": "clienteId",
+      "label": "Cliente",
+      "type": "textfield",
+      "id": "Field_clienteId",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "key": "vendedorId",
+      "label": "Vendedor responsable",
+      "type": "textfield",
+      "id": "Field_vendedorId",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "VEN-001"
+    },
+    {
+      "key": "zona",
+      "label": "Zona y dirección de entrega",
+      "type": "textfield",
+      "id": "Field_zona",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "Centro - Villavicencio"
+    },
+    {
+      "key": "canal",
+      "label": "Canal de venta",
+      "type": "select",
+      "id": "Field_canal",
+      "validate": {
+        "required": true
+      },
+      "values": [
+        {
+          "label": "Directo (venta al cliente)",
+          "value": "DIRECTO"
+        },
+        {
+          "label": "Indirecto (distribuidor: intercambio de envases)",
+          "value": "DISTRIBUIDOR"
+        }
+      ],
+      "defaultValue": "DIRECTO"
+    },
+    {
+      "key": "loteId",
+      "label": "Lote (LOTE-DEMO, LOTE-PENDIENTE o LOTE-VENCIDO)",
+      "type": "textfield",
+      "id": "Field_loteId",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "LOTE-DEMO"
+    },
+    {
+      "key": "cantidad",
+      "label": "Unidades solicitadas",
+      "type": "number",
+      "id": "Field_cantidad",
+      "validate": {
+        "min": 1,
+        "required": true
+      },
+      "decimalDigits": 0,
+      "increment": "1",
+      "defaultValue": 2
+    },
+    {
+      "key": "precioUnitario",
+      "label": "Precio unitario COP",
+      "type": "number",
+      "id": "Field_precioUnitario",
+      "validate": {
+        "min": 1,
+        "required": true
+      },
+      "decimalDigits": 0,
+      "increment": "1",
+      "defaultValue": 10000
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Def_accion_cobro" name="Definir la acción de cobro" namespace="https://aguacumbre.example/dmn">
+  <decision id="accion_cobro" name="Definir la acción de cobro" camunda:historyTimeToLive="180">
+    <decisionTable id="Table_accion_cobro" hitPolicy="UNIQUE">
+      <input id="accion_cobro_in0" label="Canal"><inputExpression id="accion_cobro_expr0" typeRef="string"><text>canal</text></inputExpression></input>
+      <input id="accion_cobro_in1" label="Valor de la venta (COP)"><inputExpression id="accion_cobro_expr1" typeRef="long"><text>valorVenta</text></inputExpression></input>
+      <output id="accion_cobro_out" label="Acción de cobro" name="accionCobro" typeRef="string" />
+      <rule id="accion_cobro_rule0">
+        <description>Umbral de ejemplo: validar con la empresa</description>
+        <inputEntry id="accion_cobro_r0i0"><text>"DIRECTO"</text></inputEntry>
+        <inputEntry id="accion_cobro_r0i1"><text>&lt;= 1000000</text></inputEntry>
+        <outputEntry id="accion_cobro_r0o"><text>"RECORDATORIO"</text></outputEntry>
+      </rule>
+      <rule id="accion_cobro_rule1">
+        <description>Umbral de ejemplo: validar con la empresa</description>
+        <inputEntry id="accion_cobro_r1i0"><text>"DIRECTO"</text></inputEntry>
+        <inputEntry id="accion_cobro_r1i1"><text>&gt; 1000000</text></inputEntry>
+        <outputEntry id="accion_cobro_r1o"><text>"LLAMADA_DE_COBRO"</text></outputEntry>
+      </rule>
+      <rule id="accion_cobro_rule2">
+        <description>Distribuidores: se concilia envases y saldo (canal indirecto)</description>
+        <inputEntry id="accion_cobro_r2i0"><text>"DISTRIBUIDOR"</text></inputEntry>
+        <inputEntry id="accion_cobro_r2i1"><text>-</text></inputEntry>
+        <outputEntry id="accion_cobro_r2o"><text>"ACUERDO_DE_PAGO"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

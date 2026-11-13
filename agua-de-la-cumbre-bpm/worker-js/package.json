@@ -1,0 +1,8 @@
+{
+  "name": "agua-de-la-cumbre-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "External Tasks (JavaScript) de PR-CO-03, PR-SO-04 y PR-SO-05 para Camunda 7",
+  "scripts": { "desplegar": "node desplegar.cjs", "start": "node worker.cjs", "test": "node --test" },
+  "engines": { "node": ">=18" }
+}

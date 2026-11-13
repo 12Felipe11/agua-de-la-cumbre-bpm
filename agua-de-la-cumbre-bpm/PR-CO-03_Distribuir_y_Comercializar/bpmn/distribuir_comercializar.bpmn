@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_distribuir_comercializar" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.52.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.24.0">
+  <bpmn:message id="Message_VentaEntregada" name="VentaEntregada" />
+  <bpmn:message id="Message_LoteLiberado" name="LoteLiberado" />
+  <bpmn:error id="Error_SIN_STOCK" name="SIN_STOCK" errorCode="SIN_STOCK" />
+  <bpmn:collaboration id="Collab_distribuir_comercializar">
+    <bpmn:participant id="Participant_distribuir_comercializar" name="PR-CO-03 Distribuir y Comercializar el Producto Terminado" processRef="distribuir_comercializar" />
+    <bpmn:participant id="Ext_Cli" name="Cliente / Distribuidor" />
+    <bpmn:messageFlow id="Msg_distribuir_comercializar_1" name="Pedido" sourceRef="Ext_Cli" targetRef="registrar" />
+    <bpmn:messageFlow id="Msg_distribuir_comercializar_2" name="Aviso de demora" sourceRef="demora" targetRef="Ext_Cli" />
+    <bpmn:messageFlow id="Msg_distribuir_comercializar_3" name="Producto entregado" sourceRef="entregar" targetRef="Ext_Cli" />
+  </bpmn:collaboration>
+  <bpmn:process id="distribuir_comercializar" name="PR-CO-03 Distribuir y Comercializar el Producto Terminado" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:laneSet id="LaneSet_distribuir_comercializar">
+      <bpmn:lane id="Lane_Ven" name="Ventas y Despacho">
+        <bpmn:flowNodeRef>s</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>registrar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>organizar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>entregar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>canal</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>salida</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>sinstock</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>trasladar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>e1</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Pla" name="Líder y Operario de Planta (Almacén)">
+        <bpmn:flowNodeRef>consultar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>validar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>alistar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>demora</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>bloquear</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>e2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>eb</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>lote</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>espera</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>reprog</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>e0</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="s" name="Pedido recibido del cliente o distribuidor" camunda:formRef="dist_solicitud" camunda:formRefBinding="latest"><bpmn:outgoing>Flow_distribuir_comercializar_1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:userTask id="registrar" name="Registrar el pedido y asociarlo al cliente" camunda:formRef="dist_pedido" camunda:formRefBinding="latest" camunda:candidateGroups="vendedores"><bpmn:incoming>Flow_distribuir_comercializar_1</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_2</bpmn:outgoing></bpmn:userTask>
+    <bpmn:serviceTask id="consultar" name="Consultar lote, vigencia y existencias" camunda:type="external" camunda:topic="consultar-inventario"><bpmn:incoming>Flow_distribuir_comercializar_2</bpmn:incoming><bpmn:incoming>Flow_distribuir_comercializar_25</bpmn:incoming><bpmn:incoming>Flow_distribuir_comercializar_28</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_3</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:businessRuleTask id="validar" name="Validar lote liberado, vigente y existencias" camunda:resultVariable="despacho" camunda:decisionRef="validar_despacho" camunda:decisionRefBinding="latest" camunda:mapDecisionResult="singleEntry"><bpmn:incoming>Flow_distribuir_comercializar_3</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_4</bpmn:outgoing></bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="g1" name="¿Se puede despachar?" default="Flow_distribuir_comercializar_7"><bpmn:incoming>Flow_distribuir_comercializar_4</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_5</bpmn:outgoing><bpmn:outgoing>Flow_distribuir_comercializar_6</bpmn:outgoing><bpmn:outgoing>Flow_distribuir_comercializar_7</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:parallelGateway id="a1"><bpmn:incoming>Flow_distribuir_comercializar_5</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_9</bpmn:outgoing><bpmn:outgoing>Flow_distribuir_comercializar_10</bpmn:outgoing></bpmn:parallelGateway>
+    <bpmn:manualTask id="alistar" name="Alistar el pedido con lotes liberados"><bpmn:incoming>Flow_distribuir_comercializar_9</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_11</bpmn:outgoing></bpmn:manualTask>
+    <bpmn:userTask id="organizar" name="Organizar el pedido por zona y vendedor" camunda:formRef="dist_preparar" camunda:formRefBinding="latest" camunda:candidateGroups="vendedores"><bpmn:incoming>Flow_distribuir_comercializar_10</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_12</bpmn:outgoing></bpmn:userTask>
+    <bpmn:parallelGateway id="a2"><bpmn:incoming>Flow_distribuir_comercializar_11</bpmn:incoming><bpmn:incoming>Flow_distribuir_comercializar_12</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_13</bpmn:outgoing></bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="g2" name="¿Canal de entrega?" default="Flow_distribuir_comercializar_15"><bpmn:incoming>Flow_distribuir_comercializar_13</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_14</bpmn:outgoing><bpmn:outgoing>Flow_distribuir_comercializar_15</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:userTask id="entregar" name="Entregar el producto al cliente y registrar el comprobante" camunda:formRef="dist_comprobante" camunda:formRefBinding="latest" camunda:candidateGroups="vendedores"><bpmn:incoming>Flow_distribuir_comercializar_14</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_16</bpmn:outgoing></bpmn:userTask>
+    <bpmn:callActivity id="canal" name="Intercambiar envases vacíos por llenos" calledElement="intercambio_envases" camunda:calledElementBinding="latest"><bpmn:extensionElements><camunda:in variables="all" /><camunda:out variables="all" /></bpmn:extensionElements><bpmn:incoming>Flow_distribuir_comercializar_15</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_17</bpmn:outgoing></bpmn:callActivity>
+    <bpmn:exclusiveGateway id="g3"><bpmn:incoming>Flow_distribuir_comercializar_16</bpmn:incoming><bpmn:incoming>Flow_distribuir_comercializar_17</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_18</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="salida" name="Registrar salida (F-AC-PT-002): lote y cantidad" camunda:type="external" camunda:topic="registrar-salida-producto"><bpmn:incoming>Flow_distribuir_comercializar_18</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_19</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:boundaryEvent id="sinstock" name="Sin existencias" attachedToRef="salida"><bpmn:outgoing>Flow_distribuir_comercializar_21</bpmn:outgoing><bpmn:errorEventDefinition id="EED_sinstock" errorRef="Error_SIN_STOCK" /></bpmn:boundaryEvent>
+    <bpmn:intermediateThrowEvent id="trasladar" name="Venta trasladada a PR-SO-05"><bpmn:incoming>Flow_distribuir_comercializar_19</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_20</bpmn:outgoing><bpmn:messageEventDefinition id="MED_trasladar" messageRef="Message_VentaEntregada" camunda:type="external" camunda:topic="trasladar-venta" /></bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="e1" name="Producto entregado y venta registrada"><bpmn:incoming>Flow_distribuir_comercializar_20</bpmn:incoming></bpmn:endEvent>
+    <bpmn:userTask id="demora" name="Informar la demora al cliente" camunda:formRef="seguimiento" camunda:formRefBinding="latest" camunda:candidateGroups="bodega"><bpmn:incoming>Flow_distribuir_comercializar_7</bpmn:incoming><bpmn:incoming>Flow_distribuir_comercializar_21</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_22</bpmn:outgoing></bpmn:userTask>
+    <bpmn:serviceTask id="bloquear" name="Bloquear el lote vencido y remitirlo a PR-CO-04" camunda:type="external" camunda:topic="bloquear-lote"><bpmn:incoming>Flow_distribuir_comercializar_6</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_8</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:endEvent id="e2" name="Lote bloqueado; remitido a PR-CO-04"><bpmn:incoming>Flow_distribuir_comercializar_8</bpmn:incoming></bpmn:endEvent>
+    <bpmn:eventBasedGateway id="eb"><bpmn:incoming>Flow_distribuir_comercializar_22</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_23</bpmn:outgoing><bpmn:outgoing>Flow_distribuir_comercializar_24</bpmn:outgoing></bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="lote" name="Lote liberado disponible (PR-CO-02)"><bpmn:incoming>Flow_distribuir_comercializar_23</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_25</bpmn:outgoing><bpmn:messageEventDefinition id="MED_lote" messageRef="Message_LoteLiberado" /></bpmn:intermediateCatchEvent>
+    <bpmn:intermediateCatchEvent id="espera" name="Espera máxima agotada"><bpmn:documentation>Plazo configurable en application.yaml (agua.plazos.espera-lote). Valor propuesto para operación: P3D.</bpmn:documentation><bpmn:incoming>Flow_distribuir_comercializar_24</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_26</bpmn:outgoing><bpmn:timerEventDefinition id="TED_espera"><bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${plazoEsperaLote}</bpmn:timeDuration></bpmn:timerEventDefinition></bpmn:intermediateCatchEvent>
+    <bpmn:userTask id="reprog" name="Reprogramar o cancelar el pedido" camunda:formRef="dist_reprogramar" camunda:formRefBinding="latest" camunda:candidateGroups="bodega"><bpmn:incoming>Flow_distribuir_comercializar_26</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_27</bpmn:outgoing></bpmn:userTask>
+    <bpmn:exclusiveGateway id="g4" name="¿Reintentar?" default="Flow_distribuir_comercializar_29"><bpmn:incoming>Flow_distribuir_comercializar_27</bpmn:incoming><bpmn:outgoing>Flow_distribuir_comercializar_28</bpmn:outgoing><bpmn:outgoing>Flow_distribuir_comercializar_29</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:endEvent id="e0" name="Pedido cancelado sin despacho"><bpmn:incoming>Flow_distribuir_comercializar_29</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_1" sourceRef="s" targetRef="registrar" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_2" sourceRef="registrar" targetRef="consultar" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_3" sourceRef="consultar" targetRef="validar" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_4" sourceRef="validar" targetRef="g1" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_5" name="Sí" sourceRef="g1" targetRef="a1"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${despacho == 'DESPACHAR'}</bpmn:conditionExpression></bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_6" name="Vencido" sourceRef="g1" targetRef="bloquear"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${despacho == 'BLOQUEAR'}</bpmn:conditionExpression></bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_7" name="No" sourceRef="g1" targetRef="demora" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_8" sourceRef="bloquear" targetRef="e2" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_9" sourceRef="a1" targetRef="alistar" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_10" sourceRef="a1" targetRef="organizar" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_11" sourceRef="alistar" targetRef="a2" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_12" sourceRef="organizar" targetRef="a2" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_13" sourceRef="a2" targetRef="g2" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_14" name="Directo" sourceRef="g2" targetRef="entregar"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${canal == 'DIRECTO'}</bpmn:conditionExpression></bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_15" name="Distribuidor" sourceRef="g2" targetRef="canal" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_16" sourceRef="entregar" targetRef="g3" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_17" sourceRef="canal" targetRef="g3" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_18" sourceRef="g3" targetRef="salida" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_19" sourceRef="salida" targetRef="trasladar" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_20" sourceRef="trasladar" targetRef="e1" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_21" sourceRef="sinstock" targetRef="demora" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_22" sourceRef="demora" targetRef="eb" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_23" sourceRef="eb" targetRef="lote" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_24" sourceRef="eb" targetRef="espera" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_25" sourceRef="lote" targetRef="consultar" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_26" sourceRef="espera" targetRef="reprog" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_27" sourceRef="reprog" targetRef="g4" />
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_28" name="Sí" sourceRef="g4" targetRef="consultar"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${reintentarStock == true}</bpmn:conditionExpression></bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_distribuir_comercializar_29" name="No" sourceRef="g4" targetRef="e0" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_distribuir_comercializar">
+    <bpmndi:BPMNPlane id="Plane_distribuir_comercializar" bpmnElement="Collab_distribuir_comercializar">
+      <bpmndi:BPMNShape id="Participant_distribuir_comercializar_di" bpmnElement="Participant_distribuir_comercializar" isHorizontal="true"><dc:Bounds x="160" y="200" width="2610" height="688" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Ven_di" bpmnElement="Lane_Ven" isHorizontal="true"><dc:Bounds x="190" y="200" width="2580" height="232" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Pla_di" bpmnElement="Lane_Pla" isHorizontal="true"><dc:Bounds x="190" y="432" width="2580" height="456" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="s_di" bpmnElement="s"><dc:Bounds x="277" y="242" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="240" y="280" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="registrar_di" bpmnElement="registrar"><dc:Bounds x="410" y="220" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="consultar_di" bpmnElement="consultar"><dc:Bounds x="590" y="452" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="validar_di" bpmnElement="validar"><dc:Bounds x="770" y="452" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="g1_di" bpmnElement="g1" isMarkerVisible="true"><dc:Bounds x="990" y="467" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="865" y="436" width="135" height="34" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="a1_di" bpmnElement="a1"><dc:Bounds x="1170" y="235" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="alistar_di" bpmnElement="alistar"><dc:Bounds x="1310" y="452" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="organizar_di" bpmnElement="organizar"><dc:Bounds x="1310" y="220" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="a2_di" bpmnElement="a2"><dc:Bounds x="1530" y="235" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="g2_di" bpmnElement="g2" isMarkerVisible="true"><dc:Bounds x="1710" y="235" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="1585" y="204" width="135" height="34" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="entregar_di" bpmnElement="entregar"><dc:Bounds x="1850" y="220" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="canal_di" bpmnElement="canal"><dc:Bounds x="1850" y="332" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="g3_di" bpmnElement="g3" isMarkerVisible="true"><dc:Bounds x="2070" y="235" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="salida_di" bpmnElement="salida"><dc:Bounds x="2210" y="220" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="sinstock_di" bpmnElement="sinstock"><dc:Bounds x="2257" y="282" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="2297" y="304" width="90" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="trasladar_di" bpmnElement="trasladar"><dc:Bounds x="2437" y="242" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="2400" y="280" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="e1_di" bpmnElement="e1"><dc:Bounds x="2617" y="242" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="2580" y="280" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="demora_di" bpmnElement="demora"><dc:Bounds x="1130" y="564" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="bloquear_di" bpmnElement="bloquear"><dc:Bounds x="1130" y="676" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="e2_di" bpmnElement="e2"><dc:Bounds x="1357" y="810" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1320" y="848" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="eb_di" bpmnElement="eb"><dc:Bounds x="1350" y="579" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lote_di" bpmnElement="lote"><dc:Bounds x="1537" y="698" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1577" y="706" width="120" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="espera_di" bpmnElement="espera"><dc:Bounds x="1537" y="586" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1500" y="624" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="reprog_di" bpmnElement="reprog"><dc:Bounds x="1670" y="564" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="g4_di" bpmnElement="g4" isMarkerVisible="true"><dc:Bounds x="1890" y="579" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="1925" y="632" width="110" height="34" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="e0_di" bpmnElement="e0"><dc:Bounds x="2077" y="586" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="2040" y="624" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_1_di" bpmnElement="Flow_distribuir_comercializar_1"><di:waypoint x="313" y="260" /><di:waypoint x="410" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_2_di" bpmnElement="Flow_distribuir_comercializar_2"><di:waypoint x="540" y="260" /><di:waypoint x="565" y="260" /><di:waypoint x="565" y="492" /><di:waypoint x="590" y="492" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_3_di" bpmnElement="Flow_distribuir_comercializar_3"><di:waypoint x="720" y="492" /><di:waypoint x="770" y="492" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_4_di" bpmnElement="Flow_distribuir_comercializar_4"><di:waypoint x="900" y="492" /><di:waypoint x="990" y="492" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_5_di" bpmnElement="Flow_distribuir_comercializar_5"><di:waypoint x="1015" y="467" /><di:waypoint x="1015" y="260" /><di:waypoint x="1170" y="260" /><bpmndi:BPMNLabel><dc:Bounds x="1023" y="242" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_6_di" bpmnElement="Flow_distribuir_comercializar_6"><di:waypoint x="1015" y="517" /><di:waypoint x="1015" y="716" /><di:waypoint x="1130" y="716" /><bpmndi:BPMNLabel><dc:Bounds x="1023" y="698" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_7_di" bpmnElement="Flow_distribuir_comercializar_7"><di:waypoint x="1015" y="517" /><di:waypoint x="1015" y="604" /><di:waypoint x="1130" y="604" /><bpmndi:BPMNLabel><dc:Bounds x="1023" y="586" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_8_di" bpmnElement="Flow_distribuir_comercializar_8"><di:waypoint x="1260" y="716" /><di:waypoint x="1308" y="716" /><di:waypoint x="1308" y="828" /><di:waypoint x="1357" y="828" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_9_di" bpmnElement="Flow_distribuir_comercializar_9"><di:waypoint x="1195" y="285" /><di:waypoint x="1195" y="492" /><di:waypoint x="1310" y="492" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_10_di" bpmnElement="Flow_distribuir_comercializar_10"><di:waypoint x="1220" y="260" /><di:waypoint x="1310" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_11_di" bpmnElement="Flow_distribuir_comercializar_11"><di:waypoint x="1440" y="492" /><di:waypoint x="1485" y="492" /><di:waypoint x="1485" y="260" /><di:waypoint x="1530" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_12_di" bpmnElement="Flow_distribuir_comercializar_12"><di:waypoint x="1440" y="260" /><di:waypoint x="1530" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_13_di" bpmnElement="Flow_distribuir_comercializar_13"><di:waypoint x="1580" y="260" /><di:waypoint x="1710" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_14_di" bpmnElement="Flow_distribuir_comercializar_14"><di:waypoint x="1760" y="260" /><di:waypoint x="1850" y="260" /><bpmndi:BPMNLabel><dc:Bounds x="1766" y="242" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_15_di" bpmnElement="Flow_distribuir_comercializar_15"><di:waypoint x="1735" y="285" /><di:waypoint x="1735" y="372" /><di:waypoint x="1850" y="372" /><bpmndi:BPMNLabel><dc:Bounds x="1743" y="354" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_16_di" bpmnElement="Flow_distribuir_comercializar_16"><di:waypoint x="1980" y="260" /><di:waypoint x="2070" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_17_di" bpmnElement="Flow_distribuir_comercializar_17"><di:waypoint x="1980" y="372" /><di:waypoint x="2025" y="372" /><di:waypoint x="2025" y="260" /><di:waypoint x="2070" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_18_di" bpmnElement="Flow_distribuir_comercializar_18"><di:waypoint x="2120" y="260" /><di:waypoint x="2210" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_19_di" bpmnElement="Flow_distribuir_comercializar_19"><di:waypoint x="2340" y="260" /><di:waypoint x="2437" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_20_di" bpmnElement="Flow_distribuir_comercializar_20"><di:waypoint x="2473" y="260" /><di:waypoint x="2617" y="260" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_21_di" bpmnElement="Flow_distribuir_comercializar_21"><di:waypoint x="2275" y="318" /><di:waypoint x="2275" y="552" /><di:waypoint x="1165" y="552" /><di:waypoint x="1165" y="564" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_22_di" bpmnElement="Flow_distribuir_comercializar_22"><di:waypoint x="1260" y="604" /><di:waypoint x="1350" y="604" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_23_di" bpmnElement="Flow_distribuir_comercializar_23"><di:waypoint x="1375" y="629" /><di:waypoint x="1375" y="716" /><di:waypoint x="1537" y="716" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_24_di" bpmnElement="Flow_distribuir_comercializar_24"><di:waypoint x="1400" y="604" /><di:waypoint x="1537" y="604" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_25_di" bpmnElement="Flow_distribuir_comercializar_25"><di:waypoint x="1555" y="734" /><di:waypoint x="1555" y="782" /><di:waypoint x="655" y="782" /><di:waypoint x="655" y="532" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_26_di" bpmnElement="Flow_distribuir_comercializar_26"><di:waypoint x="1573" y="604" /><di:waypoint x="1670" y="604" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_27_di" bpmnElement="Flow_distribuir_comercializar_27"><di:waypoint x="1800" y="604" /><di:waypoint x="1890" y="604" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_28_di" bpmnElement="Flow_distribuir_comercializar_28"><di:waypoint x="1915" y="629" /><di:waypoint x="1915" y="684" /><di:waypoint x="655" y="684" /><di:waypoint x="655" y="532" /><bpmndi:BPMNLabel><dc:Bounds x="1921" y="631" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_distribuir_comercializar_29_di" bpmnElement="Flow_distribuir_comercializar_29"><di:waypoint x="1940" y="604" /><di:waypoint x="2077" y="604" /><bpmndi:BPMNLabel><dc:Bounds x="1946" y="586" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Ext_Cli_di" bpmnElement="Ext_Cli" isHorizontal="true"><dc:Bounds x="160" y="30" width="2610" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Msg_distribuir_comercializar_1_di" bpmnElement="Msg_distribuir_comercializar_1"><di:waypoint x="455" y="80" /><di:waypoint x="455" y="220" /><bpmndi:BPMNLabel><dc:Bounds x="460" y="88" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Msg_distribuir_comercializar_2_di" bpmnElement="Msg_distribuir_comercializar_2"><di:waypoint x="1240" y="564" /><di:waypoint x="1240" y="80" /><bpmndi:BPMNLabel><dc:Bounds x="1245" y="88" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Msg_distribuir_comercializar_3_di" bpmnElement="Msg_distribuir_comercializar_3"><di:waypoint x="1935" y="220" /><di:waypoint x="1935" y="80" /><bpmndi:BPMNLabel><dc:Bounds x="1940" y="88" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

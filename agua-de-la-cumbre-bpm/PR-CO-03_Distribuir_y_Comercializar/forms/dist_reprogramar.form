@@ -1,0 +1,46 @@
+{
+  "id": "dist_reprogramar",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "1.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Resolver falta de existencias"
+    },
+    {
+      "key": "loteId",
+      "label": "Lote",
+      "type": "textfield",
+      "id": "Field_loteId",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "key": "cantidad",
+      "label": "Cantidad",
+      "type": "number",
+      "id": "Field_cantidad",
+      "validate": {
+        "min": 0
+      },
+      "disabled": true,
+      "decimalDigits": 0,
+      "increment": "1"
+    },
+    {
+      "key": "reintentarStock",
+      "label": "Reintentar después de reponer existencias vigentes",
+      "type": "checkbox",
+      "id": "Field_reintentarStock",
+      "validate": {},
+      "defaultValue": false
+    }
+  ]
+}

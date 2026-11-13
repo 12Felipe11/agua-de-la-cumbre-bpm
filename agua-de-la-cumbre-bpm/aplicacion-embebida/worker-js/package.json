@@ -1,0 +1,1 @@
+{"name":"agua-cumbre-worker","version":"3.0.0","private":true,"scripts":{"start":"node worker.cjs","test":"node --test"},"engines":{"node":">=18"}}

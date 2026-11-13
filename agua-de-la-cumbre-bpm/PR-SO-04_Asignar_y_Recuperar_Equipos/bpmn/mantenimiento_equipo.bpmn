@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_mantenimiento_equipo" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.52.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.24.0">
+  <bpmn:collaboration id="Collab_mantenimiento_equipo">
+    <bpmn:participant id="Participant_mantenimiento_equipo" name="PR-SO-04 (subproceso) Mantener equipo de campo" processRef="mantenimiento_equipo" />
+  </bpmn:collaboration>
+  <bpmn:process id="mantenimiento_equipo" name="PR-SO-04 (subproceso) Mantener equipo de campo" isExecutable="true" camunda:historyTimeToLive="180" camunda:isStartableInTasklist="false">
+    <bpmn:laneSet id="LaneSet_mantenimiento_equipo">
+      <bpmn:lane id="Lane_Tec" name="Técnico de Mantenimiento">
+        <bpmn:flowNodeRef>s</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>marcar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>diag</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mant</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>reg</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>e</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="s" name="Equipo requiere mantenimiento"><bpmn:outgoing>Flow_mantenimiento_equipo_1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:serviceTask id="marcar" name="Registrar el equipo en mantenimiento" camunda:type="external" camunda:topic="actualizar-inventario-equipos"><bpmn:incoming>Flow_mantenimiento_equipo_1</bpmn:incoming><bpmn:outgoing>Flow_mantenimiento_equipo_2</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:userTask id="diag" name="Diagnosticar el equipo" camunda:formRef="eq_diagnostico" camunda:formRefBinding="latest" camunda:candidateGroups="tecnicos"><bpmn:incoming>Flow_mantenimiento_equipo_2</bpmn:incoming><bpmn:outgoing>Flow_mantenimiento_equipo_3</bpmn:outgoing></bpmn:userTask>
+    <bpmn:manualTask id="mant" name="Ejecutar mantenimiento preventivo o correctivo"><bpmn:incoming>Flow_mantenimiento_equipo_3</bpmn:incoming><bpmn:outgoing>Flow_mantenimiento_equipo_4</bpmn:outgoing></bpmn:manualTask>
+    <bpmn:userTask id="reg" name="Registrar el mantenimiento y el estado final del equipo" camunda:formRef="eq_informe_mantenimiento" camunda:formRefBinding="latest" camunda:candidateGroups="tecnicos"><bpmn:incoming>Flow_mantenimiento_equipo_4</bpmn:incoming><bpmn:outgoing>Flow_mantenimiento_equipo_5</bpmn:outgoing></bpmn:userTask>
+    <bpmn:endEvent id="e" name="Mantenimiento registrado"><bpmn:incoming>Flow_mantenimiento_equipo_5</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_mantenimiento_equipo_1" sourceRef="s" targetRef="marcar" />
+    <bpmn:sequenceFlow id="Flow_mantenimiento_equipo_2" sourceRef="marcar" targetRef="diag" />
+    <bpmn:sequenceFlow id="Flow_mantenimiento_equipo_3" sourceRef="diag" targetRef="mant" />
+    <bpmn:sequenceFlow id="Flow_mantenimiento_equipo_4" sourceRef="mant" targetRef="reg" />
+    <bpmn:sequenceFlow id="Flow_mantenimiento_equipo_5" sourceRef="reg" targetRef="e" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_mantenimiento_equipo">
+    <bpmndi:BPMNPlane id="Plane_mantenimiento_equipo" bpmnElement="Collab_mantenimiento_equipo">
+      <bpmndi:BPMNShape id="Participant_mantenimiento_equipo_di" bpmnElement="Participant_mantenimiento_equipo" isHorizontal="true"><dc:Bounds x="160" y="80" width="1170" height="190" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Tec_di" bpmnElement="Lane_Tec" isHorizontal="true"><dc:Bounds x="190" y="80" width="1140" height="190" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="s_di" bpmnElement="s"><dc:Bounds x="277" y="122" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="240" y="160" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="marcar_di" bpmnElement="marcar"><dc:Bounds x="410" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="diag_di" bpmnElement="diag"><dc:Bounds x="590" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="mant_di" bpmnElement="mant"><dc:Bounds x="770" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="reg_di" bpmnElement="reg"><dc:Bounds x="950" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="e_di" bpmnElement="e"><dc:Bounds x="1177" y="122" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1140" y="160" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_mantenimiento_equipo_1_di" bpmnElement="Flow_mantenimiento_equipo_1"><di:waypoint x="313" y="140" /><di:waypoint x="410" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_mantenimiento_equipo_2_di" bpmnElement="Flow_mantenimiento_equipo_2"><di:waypoint x="540" y="140" /><di:waypoint x="590" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_mantenimiento_equipo_3_di" bpmnElement="Flow_mantenimiento_equipo_3"><di:waypoint x="720" y="140" /><di:waypoint x="770" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_mantenimiento_equipo_4_di" bpmnElement="Flow_mantenimiento_equipo_4"><di:waypoint x="900" y="140" /><di:waypoint x="950" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_mantenimiento_equipo_5_di" bpmnElement="Flow_mantenimiento_equipo_5"><di:waypoint x="1080" y="140" /><di:waypoint x="1177" y="140" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
