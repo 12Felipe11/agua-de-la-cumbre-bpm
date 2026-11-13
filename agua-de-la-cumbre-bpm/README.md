@@ -133,10 +133,3 @@ Si el motor exige autenticación: `CAMUNDA_USER=demo CAMUNDA_PASSWORD=demo node 
 | External Task (JavaScript) | `consultar-inventario`, `bloquear-lote`, `registrar-salida-producto`, `trasladar-venta` | `consultar-inventario-equipos`, `constancia-acta-equipo`, `actualizar-inventario-equipos` | `registrar-venta`, `generar-factura`, `registrar-cuenta-por-cobrar`, `enviar-factura`, `validar-pago`, `aplicar-abono` |
 | Adicional | Error de borde `SIN_STOCK` | — | Proceso compartido `revisar_soporte` |
 
-## Aplicación embebida (opcional)
-
-`aplicacion-embebida/` contiene los mismos tres procesos en un motor Camunda embebido en Spring Boot 3.5 con portal Thymeleaf, base H2 y logo de Agua de la Cumbre. Allí las tareas que tocan la base de datos son JavaDelegate. Ver `aplicacion-embebida/README.md`. Usar **o** la aplicación embebida **o** Camunda Run con las carpetas `PR-*`, no ambas en el mismo motor, porque comparten las claves de proceso.
-
-## Supuestos
-
-Propuesta TO-BE académica. Inventarios, cartera, liberación de lotes (PR-CO-02) y pagos son simulados por el worker y el panel. Los plazos y el umbral de la DMN `accion_cobro` (1.000.000 COP) son propuestas por validar con la empresa.
