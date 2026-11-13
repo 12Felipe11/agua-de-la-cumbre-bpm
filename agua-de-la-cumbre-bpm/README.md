@@ -119,17 +119,3 @@ Si el motor exige autenticación: `CAMUNDA_USER=demo CAMUNDA_PASSWORD=demo node 
 | Pago mayor al saldo, o comprobante repetido | REVISAR → *Revisar diferencias y corregir el registro* |
 | No registrar el pago | Al minuto vence el plazo: DMN `accion_cobro` → *Gestionar el cobro* |
 | Equipo apto sin marcar | DMN = MANTENIMIENTO → subproceso de mantenimiento |
-
-## Elementos de la rúbrica por proceso
-
-| Elemento | PR-CO-03 | PR-SO-04 | PR-SO-05 |
-|---|---|---|---|
-| Camunda Forms | 6 formularios + 2 del subproceso | 4 + 2 del subproceso | 5 + 1 del subproceso |
-| DMN | `validar_despacho` | `disposicion_equipo` | `accion_cobro`, `estado_cartera` |
-| AND / XOR | AND alistar ‖ organizar; XOR despacho, canal, reintento | AND registrar ‖ entregar; XOR disponibilidad, mantenimiento | AND cuenta por cobrar ‖ factura; XOR estado de cartera |
-| Call Activity | `intercambio_envases` | `mantenimiento_equipo` | `conciliar_cartera`, `revisar_soporte` |
-| Evento de mensaje | Captura `LoteLiberado`; envío `VentaEntregada` | Captura `DevolucionEquipo` | Inicio `VentaEntregada`; envío `FacturaEnviada`; captura `PagoRecibido` |
-| Event-based gateway + temporizador | Lote liberado vs. espera máxima | Devolución vs. vencimiento | Pago vs. plazo de pago |
-| External Task (JavaScript) | `consultar-inventario`, `bloquear-lote`, `registrar-salida-producto`, `trasladar-venta` | `consultar-inventario-equipos`, `constancia-acta-equipo`, `actualizar-inventario-equipos` | `registrar-venta`, `generar-factura`, `registrar-cuenta-por-cobrar`, `enviar-factura`, `validar-pago`, `aplicar-abono` |
-| Adicional | Error de borde `SIN_STOCK` | — | Proceso compartido `revisar_soporte` |
-
