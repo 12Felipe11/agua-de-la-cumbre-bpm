@@ -2,7 +2,7 @@
 
 **Nombre del proyecto:** Agua de la Cumbre BPM: distribución, equipos de campo y cartera.
 
-Modelado y automatización, en Camunda Platform 7, de los tres procesos priorizados en el documento *Identificación de procesos* de la empresa Agua de la Cumbre (Villavicencio, Meta). Proyecto académico de Ingeniería de Sistemas, Universidad de los Llanos.
+Modelado y automatización, en Camunda Platform 7, de los tres procesos priorizados en el documento *Identificación de procesos* de la empresa Agua de la Cumbre (Villavicencio, Meta).
 
 ## Integrantes y proceso a cargo
 
