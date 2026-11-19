@@ -1,0 +1,55 @@
+{
+  "id": "env_registro",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "3.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Registrar el intercambio"
+    },
+    {
+      "key": "loteId",
+      "label": "Lote",
+      "type": "textfield",
+      "disabled": true,
+      "id": "Field_loteId",
+      "validate": {}
+    },
+    {
+      "key": "cantidad",
+      "label": "Unidades del pedido",
+      "type": "number",
+      "disabled": true,
+      "id": "Field_cantidad",
+      "validate": {}
+    },
+    {
+      "key": "envasesVacios",
+      "label": "Envases vacíos recibidos",
+      "type": "number",
+      "disabled": true,
+      "id": "Field_envasesVacios",
+      "validate": {}
+    },
+    {
+      "key": "envasesLlenos",
+      "label": "Envases llenos entregados",
+      "type": "number",
+      "decimalDigits": 0,
+      "increment": "1",
+      "validate": {
+        "required": true,
+        "min": 1
+      },
+      "id": "Field_envasesLlenos",
+      "defaultValue": 2
+    }
+  ]
+}

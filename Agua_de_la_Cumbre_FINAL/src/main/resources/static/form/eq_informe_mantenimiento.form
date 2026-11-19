@@ -1,0 +1,44 @@
+{
+  "id": "eq_informe_mantenimiento",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "1.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Registrar el mantenimiento del equipo"
+    },
+    {
+      "key": "equipoId",
+      "label": "Equipo",
+      "type": "textfield",
+      "id": "Field_equipoId",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "key": "informeMantenimiento",
+      "label": "Informe técnico del mantenimiento",
+      "type": "textfield",
+      "id": "Field_informeMantenimiento",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "INF-MANT-001"
+    },
+    {
+      "key": "equipoApto",
+      "label": "Equipo recuperado y apto",
+      "type": "checkbox",
+      "id": "Field_equipoApto",
+      "validate": {},
+      "defaultValue": true
+    }
+  ]
+}

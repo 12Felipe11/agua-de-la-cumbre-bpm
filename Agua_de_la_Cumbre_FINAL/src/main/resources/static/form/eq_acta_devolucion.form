@@ -1,0 +1,44 @@
+{
+  "id": "eq_acta_devolucion",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "1.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Verificar el estado del equipo y firmar el acta de devolución"
+    },
+    {
+      "key": "equipoId",
+      "label": "Equipo",
+      "type": "textfield",
+      "id": "Field_equipoId",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "key": "actaDevolucion",
+      "label": "Acta de devolución firmada",
+      "type": "textfield",
+      "id": "Field_actaDevolucion",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "ACTA-DEV-001"
+    },
+    {
+      "key": "equipoApto",
+      "label": "Equipo apto y saneado para nueva entrega",
+      "type": "checkbox",
+      "id": "Field_equipoApto",
+      "validate": {},
+      "defaultValue": true
+    }
+  ]
+}

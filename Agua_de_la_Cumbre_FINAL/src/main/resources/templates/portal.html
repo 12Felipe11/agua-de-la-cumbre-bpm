@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Portal · Agua de la Cumbre</title>
+  <link rel="stylesheet" th:href="@{/app.css(v='20261113c')}">
+</head>
+<body class="workspace">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <aside class="sidebar">
+    <a class="brand" th:href="@{/portal}"><img class="brand-logo" th:src="@{/brand/agua-de-la-cumbre.png}" alt="Agua de la Cumbre — potable tratada" width="1254" height="1254"><span class="brand-caption">Portal de operaciones</span></a>
+    <nav aria-label="Navegación principal">
+      <a class="selected" th:href="@{/portal}" aria-current="page"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Resumen</a>
+      <a th:if="${interno}" href="#tareas"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M9 10h6M9 15h4"/></svg>Tareas pendientes</a>
+      <a href="#autorizaciones"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/></svg>Eventos externos</a>
+      <a th:if="${interno}" th:href="@{/portal/registros}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v16H4zM8 2v6m8-6v6M4 10h16M8 14h8m-8 3h5"/></svg>Registros del negocio</a>
+      <a th:if="${interno}" th:href="@{/camunda/app/cockpit/default/}" target="_blank" rel="noopener"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3h7v7m0-7-12 12M10 5H3v16h16v-7"/></svg>Camunda Cockpit ↗</a>
+    </nav>
+    <form class="signout" th:action="@{/logout}" method="post"><button type="submit">Cerrar sesión</button></form>
+  </aside>
+  <main class="dashboard" id="contenido">
+    <div class="workspace-bar"><span>Espacio de trabajo <span aria-hidden="true">/</span> <b th:text="${interno ? 'Operaciones' : 'Mis solicitudes'}">Operaciones</b></span><a th:if="${interno}" th:href="@{/portal/registros}">Consultar registros <span aria-hidden="true">↗</span></a></div><header class="hero">
+      <div><h1>El agua sigue su curso.<br>Tu operación también.</h1><p>Coordina la distribución, los equipos de campo y la cartera desde un espacio creado para Agua de la Cumbre.</p></div>
+      <a class="button hero-action" href="#procesos">Iniciar un proceso <span aria-hidden="true">→</span></a>
+    </header>
+    <p class="ok" role="status" th:if="${ok}" th:text="${ok}"></p>
+    <p class="error" role="alert" th:if="${error}" th:text="${error}"></p>
+    <div class="work-overview">
+    <nav class="stats" aria-label="Resumen de actividad"><div class="summary-heading"><h2>Tu operación ahora</h2><a th:href="@{/portal}" aria-label="Actualizar panel" title="Actualizar panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M6 7a7 7 0 0 1 12-1l2 6M4 12l2 6a7 7 0 0 0 12-1"/></svg></a></div>
+      <a href="#instancias"><span>Instancias activas</span><strong th:text="${#lists.size(instancias)}"></strong></a>
+      <a th:if="${interno}" href="#tareas"><span>Tareas pendientes</span><strong th:text="${#lists.size(tareas)}"></strong></a>
+      <a href="#autorizaciones"><span>Eventos por recibir</span><strong th:text="${#lists.size(mensajes)}"></strong></a>
+    </nav>
+    <section class="process-section" id="procesos">
+      <div class="section-heading"><h2>Iniciar proceso</h2><span>Selecciona el área de trabajo</span></div>
+      <div class="process-grid">
+        <a class="process" th:each="p : ${procesos}" th:href="@{/portal/iniciar/{id}(id=${p.id})}">
+          <span class="process-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><g th:if="${p.id == 'facturar_recaudar'}"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h3m-3 4h3m4-4h1m-1 4h1"/></g><g th:if="${p.id == 'equipos_campo'}"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 5v9l9 5 9-5V8m-9 5v9M7.5 5.5l9 5"/></g><g th:if="${p.id == 'distribuir_comercializar'}"><path d="M3 6h11v12H3zM14 10h4l3 4v4h-7"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></g></svg></span>
+          <span class="process-copy"><strong th:text="${p.nombre}"></strong><span class="process-description" th:text="${p.descripcion}"></span></span><span class="process-action">Iniciar <span aria-hidden="true">→</span></span>
+        </a>
+      </div>
+    </section>
+    </div>
+    <div class="section-heading activity-heading"><h2>Seguimiento de la operación</h2><span>Tareas y solicitudes en curso</span></div><div class="queues">
+      <section class="panel" id="tareas" th:if="${interno}">
+        <h2>Tareas pendientes<span class="count" th:text="${#lists.size(tareas)}"></span></h2>
+        <p class="empty" th:if="${#lists.isEmpty(tareas)}">No hay tareas humanas pendientes. Las nuevas actividades aparecerán aquí.</p>
+        <article class="entry" th:each="t : ${tareas}">
+          <strong th:text="${t.name}"></strong>
+          <p class="identifier" th:text="${t.processInstanceId}"></p>
+          <a class="button secondary" th:href="@{/portal/tareas/{id}(id=${t.id})}">Abrir formulario</a>
+        </article>
+      </section>
+      <section class="panel" id="autorizaciones">
+        <h2>Eventos externos<span class="count" th:text="${#lists.size(mensajes)}"></span></h2>
+        <p class="empty" th:if="${#lists.isEmpty(mensajes)}">No hay instancias esperando un mensaje. Aquí aparecerán el lote liberado, la devolución de un equipo o el pago de un cliente.</p>
+        <p class="hint" th:unless="${#lists.isEmpty(mensajes)}">Cada espera también tiene un temporizador: si el mensaje no llega a tiempo, el proceso sigue por el camino del plazo vencido.</p>
+        <article class="entry" th:each="s : ${mensajes}">
+          <strong th:text="${eventos[s.eventName].accion}"></strong>
+          <p th:text="${eventos[s.eventName].ayuda}"></p>
+          <p class="identifier" th:text="${s.eventName + ' · ' + s.processInstanceId}"></p>
+          <form class="actions" th:action="@{/portal/eventos/{id}(id=${s.id})}" method="post">
+            <button th:text="${eventos[s.eventName].accion}"></button>
+          </form>
+        </article>
+      </section>
+      <section class="panel" id="externas" th:if="${interno}">
+        <h2>Tareas externas<span class="count" th:text="${#lists.size(externas)}"></span></h2>
+        <p class="empty" th:if="${#lists.isEmpty(externas)}">No hay tareas externas pendientes.</p>
+        <article class="entry" th:each="e : ${externas}">
+          <strong th:text="${e.topicName}"></strong>
+          <p class="identifier" th:text="${e.processInstanceId}"></p>
+          <p th:if="${e.errorMessage}" class="error" th:text="${e.errorMessage}"></p>
+          <small>El worker Node.js debe estar activo.</small>
+        </article>
+      </section>
+      <section class="panel" id="instancias">
+        <h2>Instancias activas<span class="count" th:text="${#lists.size(instancias)}"></span></h2>
+        <p class="empty" th:if="${#lists.isEmpty(instancias)}">No hay instancias activas.</p>
+        <ul class="instance-list" th:unless="${#lists.isEmpty(instancias)}">
+          <li th:each="p : ${instancias}"><a th:if="${interno}" class="identifier" th:href="@{/portal/instancias/{id}(id=${p.id})}" th:text="${(p.businessKey != null ? p.businessKey + ' · ' : '') + p.processDefinitionId + ' · ' + p.id}"></a><span th:unless="${interno}" class="identifier" th:text="${(p.businessKey != null ? p.businessKey + ' · ' : '') + p.processDefinitionId}"></span></li>
+        </ul>
+      </section>
+      <section class="panel" th:unless="${interno}">
+        <h2>Solicitudes finalizadas<span class="count" th:text="${#lists.size(finalizadas)}"></span></h2>
+        <p class="empty" th:if="${#lists.isEmpty(finalizadas)}">Aún no hay solicitudes finalizadas.</p>
+        <ul class="instance-list" th:unless="${#lists.isEmpty(finalizadas)}"><li th:each="p : ${finalizadas}" th:text="${(p.businessKey != null ? p.businessKey + ' · ' : '') + p.processDefinitionId}"></li></ul>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

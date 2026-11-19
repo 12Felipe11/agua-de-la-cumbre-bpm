@@ -1,0 +1,161 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noquoting]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[margin=2.35cm,headheight=15pt]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs,longtable,array,tabularx}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{caption}
+\usepackage{needspace}
+\definecolor{azul}{HTML}{073B75}
+\definecolor{azulclaro}{HTML}{EAF3FC}
+\definecolor{gris}{HTML}{526477}
+\hypersetup{colorlinks=true,linkcolor=azul,urlcolor=azul,pdftitle={Informe de cumplimiento - Agua de la Cumbre},pdfauthor={Equipo Agua de la Cumbre}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Agua de la Cumbre}
+\fancyhead[R]{\small Proyecto final de Ingeniería de Software}
+\fancyfoot[C]{\small Página \thepage\ de \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.3pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\setlist[itemize]{topsep=3pt,itemsep=1pt,leftmargin=1.3em}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt,leftmargin=1.5em}
+\newcommand{\ruta}[1]{\nolinkurl{#1}}
+\newcommand{\criterio}[3]{\needspace{8\baselineskip}\subsection*{#1. #2 \hfill\normalsize\color{gris}#3}}
+\begin{document}
+
+\begin{center}
+{\Large\bfseries\color{azul} Agua de la Cumbre}\par
+\vspace{5pt}
+{\LARGE Informe técnico de la entrega final}\par
+\vspace{5pt}
+{\large Correspondencia con la rejilla de evaluación del proyecto de semestre}\par
+\vspace{12pt}
+\rule{0.86\textwidth}{0.6pt}\par
+\vspace{8pt}
+Santiago Cardona Tovar \quad\textbullet\quad Brayan Steven Fernández Herrera\par
+Andrés Felipe Carrasquilla Gutiérrez\par
+\vspace{4pt}
+Ingeniería de Software \quad | \quad 19 de noviembre de 2026
+\end{center}
+
+\section*{Propósito y alcance}
+Este informe presenta el estado verificable del proyecto frente a los once criterios de la rejilla de la tercera entrega. La base de trabajo es el ZIP suministrado, la aplicación integrada de Camunda 7 y los resultados de las pruebas ejecutadas en la carpeta \ruta{Proyecto_final}. El documento de identificación sitúa a Agua de la Cumbre en Villavicencio, Meta, y describe la producción y comercialización de agua potable tratada. Para este proyecto se priorizaron tres procesos: distribución y comercialización del producto terminado, asignación y recuperación de equipos de campo, y facturación y recaudo.
+
+La solución es un prototipo académico de procesos TO-BE. La liberación de lotes, la devolución de equipos y el pago se representan mediante mensajes de demostración. No se presenta como integración con DIAN, pasarela bancaria, correo real o sistema productivo de planta. Se diferencia entre lo comprobado mediante archivos o pruebas, y lo que aún requiere publicación o una demostración en el equipo final.
+
+\section*{Resumen de cumplimiento}
+\small
+\begin{longtable}{@{}p{0.7cm}p{4.25cm}p{1.3cm}p{7.0cm}@{}}
+\toprule
+N.º & Criterio & Peso & Estado de la evidencia \\
+\midrule
+\endfirsthead
+\toprule N.º & Criterio & Peso & Estado de la evidencia \\
+\midrule\endhead
+1 & Contexto y alcance & 5\% & Documentado en identificación, README e informe. \\
+2 & Arquitectura del sistema & 8\% & Diagrama y relaciones entre portal, motor, trabajador y base de datos. \\
+3 & Modelado BPMN & 12\% & Siete BPMN editables, cuatro DMN y dieciocho formularios comprobados en los archivos. \\
+4 & Ejecución en Camunda 7 & 15\% & Recorridos de motor cubiertos por pruebas; presentación visual pendiente. \\
+5 & Aplicación para usuarios externos & 10\% & Registro, inicio y consulta de casos propios, validación y mensajes con pruebas de acceso. \\
+6 & Aplicación para usuarios internos & 12\% & Consulta y atención de tareas por grupo candidato, con pruebas de permisos. \\
+7 & Automatización e integración & 12\% & JavaDelegate y trabajador Node.js implementados; falta ensayo conjunto en vivo. \\
+8 & Persistencia y gestión de datos & 8\% & Esquema H2, datos de ejemplo, consultas y vínculo entre instancias y registros. \\
+9 & Organización del multirepositorio & 5\% & \textbf{Pendiente}: no hay enlaces accesibles a un hub y repositorios separados. \\
+10 & Instalación y configuración & 5\% & Instrucciones, versiones y parámetros; falta repetir instalación en equipo limpio. \\
+11 & Pruebas y demostración integral & 8\% & 30 pruebas Java aprobadas y pruebas del trabajador; falta demostración manual completa. \\
+\bottomrule
+\end{longtable}
+\normalsize
+Los pesos corresponden a la rejilla entregada y suman 100\%. La tabla no asigna una calificación de 0 a 5: una prueba automatizada y un documento no sustituyen la demostración integral ni los enlaces públicos exigidos por los criterios 9 y 11.
+
+\section*{Arquitectura de la solución}
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=Latex,box/.style={draw=azul,rounded corners=3pt,fill=azulclaro,align=center,text width=2.7cm,minimum height=1.15cm,font=\small},arrow/.style={->,thick,draw=azul}]
+\node[box] (cliente) at (-5.25,0) {Cliente externo};
+\node[box] (portal) at (-1.75,0) {Portal Thymeleaf\\Spring Boot};
+\node[box] (motor) at (1.75,0) {Motor\\Camunda 7};
+\node[box] (base) at (5.25,0) {H2\\motor y negocio};
+\node[box] (personal) at (-5.25,-2.0) {Personal interno\\por rol};
+\node[box] (worker) at (1.75,-2.0) {Trabajador Node.js\\External Tasks};
+\node[box] (modelos) at (5.25,-2.0) {BPMN, DMN\\y Forms};
+\draw[arrow] (cliente) -- (portal);
+\draw[arrow] (personal) -- (portal);
+\draw[arrow] (portal) -- (motor);
+\draw[arrow] (motor) -- (base);
+\draw[<->,thick,draw=azul] (worker) -- (motor);
+\draw[arrow] (motor) -- (modelos);
+\end{tikzpicture}
+\caption{Componentes de la aplicación integrada. Fuente: elaboración a partir del código del proyecto.}
+\end{figure}
+
+Spring Boot 3.5.5 contiene el portal, el motor Camunda 7.24.0 y la persistencia H2. La aplicación escucha por defecto en \ruta{127.0.0.1:8080}. El trabajador Node.js usa la API REST para atender tareas externas. Los JavaDelegate actualizan los datos de lotes, pedidos, equipos y cartera dentro de la transacción del motor. El pedido y la facturación se relacionan por llave de negocio; los movimientos guardan el identificador de la instancia.
+
+\section*{Análisis por criterio}
+\criterio{1}{Contexto y alcance}{5\%}
+El documento de identificación describe la organización, su portafolio de procesos y los objetivos de control de ventas, cartera, equipos y trazabilidad. En el alcance implementado, Santiago es responsable de PR-CO-03, Brayan de PR-SO-04 y Andrés Felipe de PR-SO-05. El README y la documentación de arquitectura explican qué parte se automatizó y qué mensajes se simulan. La descripción evita atribuir a la empresa una integración operativa que el prototipo no tiene.
+
+\criterio{2}{Arquitectura del sistema}{8\%}
+La Figura 1 muestra las aplicaciones, el motor, los modelos, el trabajador y la base. El portal recibe las entradas de clientes y personal; Camunda ejecuta los modelos y decide el avance; H2 conserva instancias y datos del negocio. El trabajador resuelve operaciones automáticas por REST y devuelve sus resultados al proceso. Los componentes se describen también en \ruta{aplicacion-embebida/docs/ARQUITECTURA_Y_ENTREGA.md}.
+
+\criterio{3}{Modelado BPMN}{12\%}
+Se verificó la presencia y sintaxis de siete archivos BPMN, cuatro decisiones DMN y dieciocho formularios Camunda Forms en \ruta{src/main/resources/static/}. Los procesos principales son \ruta{distribuir_comercializar}, \ruta{equipos_campo} y \ruta{facturar_recaudar}; los otros cuatro BPMN son procesos llamados. Los modelos incluyen eventos de mensaje, compuertas, temporizadores, tareas humanas, tareas externas y Call Activities. Los PNG de \ruta{docs/diagramas/} sirven para consulta, pero la evidencia editable son los archivos BPMN.
+
+\criterio{4}{Ejecución en Camunda 7}{15\%}
+La aplicación despliega los modelos en un motor Camunda 7 embebido. Las pruebas \ruta{ProcesosTest} ejercitan caminos principales y alternativos, decisiones DMN, mensajes, temporizadores, pagos parciales y casos de error. Las variables de proceso y grupos candidatos se encuentran en los BPMN; el portal inicia instancias por mensaje y completa tareas. El resultado automatizado confirma ejecución en el entorno de pruebas, pero todavía falta mostrar instancias en Cockpit durante la sustentación.
+
+\criterio{5}{Aplicación para usuarios externos}{10\%}
+El cliente crea una cuenta desde \ruta{/registro}, inicia distribución o solicitud de equipo y consulta sus casos activos y finalizados. El portal guarda \ruta{solicitantePortal} para limitar la visibilidad; la facturación iniciada automáticamente conserva esa relación. El cliente puede enviar el mensaje de pago o devolución únicamente cuando su propia instancia lo espera. Los campos se validan en el servidor y los formularios usan protección CSRF. \ruta{PortalTest} comprueba el inicio, la separación de casos y el rechazo de acciones no permitidas.
+
+\criterio{6}{Aplicación para usuarios internos}{12\%}
+Las tareas se muestran conforme a sus grupos candidatos: vendedores, bodega, administración, tesorería y técnicos. El formulario de cada tarea se obtiene de \ruta{camunda:formRef} del BPMN desplegado. Al completar una tarea se actualizan variables del proceso y se registra el usuario del portal que actuó. Las pruebas confirman que vendedores pueden atender su tarea y tesorería no puede abrir una tarea asignada a vendedores. El acceso a Cockpit y al REST del motor queda reservado a la cuenta administradora.
+
+\criterio{7}{Automatización e integración}{12\%}
+El trabajador JavaScript implementa el traslado de la venta, la constancia del acta de equipo y el envío de la factura simulada. El primero envía \ruta{VentaEntregada} para iniciar cartera; los otros producen contenido y huellas SHA-256 simuladas. Las decisiones y actualizaciones de inventario, equipos y cartera se conectan al motor mediante DMN y JavaDelegate. Las pruebas del trabajador y del motor verifican partes de esta integración. Falta dejar evidencia de un recorrido continuo con Spring Boot y Node.js encendidos a la vez.
+
+\criterio{8}{Persistencia y gestión de datos}{8\%}
+\ruta{schema.sql} define lotes, pedidos, equipos, cuentas, pagos y movimientos. H2 guarda los datos de negocio y el historial del motor en \ruta{data/agua-cumbre.mv.db}; \ruta{DemoData.java} carga registros de ejemplo cuando no existen. \ruta{docs/consultas.sql} ofrece consultas para revisar la demostración. La llave del pedido vincula distribución y cartera, y los movimientos guardan el identificador de instancia. La compilación y las pruebas usan H2 en memoria; conviene comprobar la conservación de datos tras reiniciar la aplicación con la base de archivo en el equipo final.
+
+\criterio{9}{Organización del multirepositorio}{5\%}
+\textbf{Estado pendiente.} El material está organizado en un ZIP y una carpeta de aplicación integrada, con README general y README del trabajador. No se verificaron un hub ni repositorios de componentes publicados con enlaces accesibles. El requisito de la rejilla no puede considerarse cumplido con la organización local. Para cerrarlo hay que publicar los componentes y el hub, incluir enlaces recíprocos y probarlos desde una sesión sin permisos especiales.
+
+\criterio{10}{Instalación y configuración}{5\%}
+El README indica Java 17 o 21, Node.js 18+, Maven o wrapper, puertos, orden de arranque y comandos de prueba. \ruta{application.yaml} contiene la base H2 y plazos de demostración; las contraseñas y plazos pueden parametrizarse mediante variables de entorno. El JAR se compiló y se incluyó en el ZIP de entrega. Aún debe repetirse la instalación en un equipo limpio, ya que las dependencias podían estar en caché en el equipo usado para preparar este informe.
+
+\criterio{11}{Pruebas y demostración integral}{8\%}
+La ejecución de \texttt{mvn package -q} terminó con 30 pruebas Java aprobadas: 21 en \ruta{ProcesosTest} y 9 en \ruta{PortalTest}, sin fallos ni errores. El archivo \ruta{worker-js/worker.test.cjs} también se ejecutó sin fallos. Se verificó la integridad del ZIP final. La demostración manual completa de cliente, personal interno, trabajador, persistencia y Cockpit no está documentada como realizada; por eso el criterio se considera parcial.
+
+\clearpage
+\section*{Guion breve de demostración}
+\begin{enumerate}
+\item Arrancar el JAR o Spring Boot y, en otra terminal, \texttt{node worker-js/worker.cjs}. Abrir \ruta{http://localhost:8080/portal}.
+\item Registrar un cliente e iniciar un pedido con identificador nuevo y lote \ruta{LOTE-DEMO}. Completar las tareas de distribución con \ruta{vendedores} y verificar la salida del lote en Registros.
+\item Observar el traslado automático a facturación. Registrar un abono y después el saldo restante; comprobar el cierre de la cuenta y los movimientos.
+\item Ejecutar un caso alternativo con \ruta{LOTE-PENDIENTE}, liberar el lote con \ruta{bodega} o esperar el temporizador. Mostrar en Cockpit las instancias y sus caminos.
+\item Ingresar con un segundo cliente y comprobar que no ve el caso ajeno ni puede entrar a tareas internas, registros o REST.
+\end{enumerate}
+
+\section*{Cierre y pendientes comprobables}
+El prototipo tiene modelos, aplicaciones, automatización y datos suficientes para recorrer los tres procesos en pruebas automatizadas. Antes de declarar la entrega completamente cumplida frente al Excel deben hacerse tres acciones: (1) publicar y enlazar el multirepositorio, (2) repetir la instalación desde cero en el computador de presentación y (3) ejecutar y registrar la demostración integral. Este informe deja esas actividades visibles para que la sustentación no confunda una capacidad implementada con una evidencia todavía no obtenida.
+
+\section*{Fuentes y ubicación de evidencias}
+\begin{enumerate}
+\item \emph{3rd Delivery - Rejilla Evaluación (1).xlsx}, hoja ``Rejilla del proyecto'', criterios 1--11. Archivo entregado en \ruta{Proyecto_final/}.
+\item \emph{Identificación - Proyectoo.pdf}, documento de identificación de procesos de Agua de la Cumbre, incluido en el ZIP inicial.
+\item \ruta{aplicacion-embebida/README.md}, instrucciones de instalación y recorrido.
+\item Carpeta \ruta{docs/} de la aplicación: \emph{ARQUITECTURA\_Y\_ENTREGA.md} y \emph{VALIDACION.md}, correspondencia y pruebas.
+\item Carpetas \ruta{src/main/resources/static/}, \ruta{src/test/} y \ruta{worker-js/} de la aplicación: modelos, pruebas y trabajador.
+\end{enumerate}
+
+\end{document}

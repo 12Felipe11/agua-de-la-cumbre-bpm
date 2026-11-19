@@ -1,0 +1,37 @@
+server:
+  address: 127.0.0.1
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/agua-cumbre;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: ${DB_PASSWORD:}
+  sql:
+    init:
+      mode: always
+camunda:
+  bpm:
+    admin-user:
+      id: admin
+      password: ${CAMUNDA_ADMIN_PASSWORD:admin}
+      first-name: Administrador
+    filter:
+      create: Todas las tareas
+    history-level: full
+    authorization:
+      enabled: true
+    generic-properties:
+      properties:
+        historyTimeToLive: 180
+        enforceHistoryTimeToLive: true
+    deployment-resource-pattern:
+      - classpath*:/static/bpmn/*.bpmn
+      - classpath*:/static/dmn/*.dmn
+      - classpath*:/static/form/*.form
+# Plazos de los eventos de tiempo (ISO-8601). Valores cortos para la demostración;
+# propuestos para operación real: espera-lote P3D, asignacion P30D, pago P30D.
+agua:
+  plazos:
+    espera-lote: ${PLAZO_ESPERA_LOTE:PT1M}
+    asignacion: ${PLAZO_ASIGNACION:PT2M}
+    pago: ${PLAZO_PAGO:PT1M}

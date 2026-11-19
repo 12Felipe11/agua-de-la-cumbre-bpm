@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_equipos_campo" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.52.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.24.0">
+  <bpmn:message id="Message_SolicitudEquipo" name="SolicitudEquipo" />
+  <bpmn:message id="Message_DevolucionEquipo" name="DevolucionEquipo" />
+  <bpmn:collaboration id="Collab_equipos_campo">
+    <bpmn:participant id="Participant_equipos_campo" name="PR-SO-04 Asignar y Recuperar Equipos de Campo" processRef="equipos_campo" />
+    <bpmn:participant id="Ext_Sol" name="Cliente / Vendedor" />
+    <bpmn:messageFlow id="Msg_equipos_campo_1" name="Solicitud" sourceRef="Ext_Sol" targetRef="s" />
+    <bpmn:messageFlow id="Msg_equipos_campo_2" name="No disponible" sourceRef="informar" targetRef="Ext_Sol" />
+    <bpmn:messageFlow id="Msg_equipos_campo_3" name="Equipo y acta" sourceRef="entregar" targetRef="Ext_Sol" />
+    <bpmn:messageFlow id="Msg_equipos_campo_4" name="Devolución" sourceRef="Ext_Sol" targetRef="devol" />
+  </bpmn:collaboration>
+  <bpmn:process id="equipos_campo" name="Asignar y Recuperar Equipos de Campo" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:laneSet id="LaneSet_equipos_campo">
+      <bpmn:lane id="Lane_Pla" name="Responsable de Planta">
+        <bpmn:flowNodeRef>s</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>verificar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>asignar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>constancia</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>informar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>e0</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Tec" name="Operario de Planta">
+        <bpmn:flowNodeRef>a1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>registrar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>entregar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>eb</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>vence</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>devol</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>recibir</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>estado</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>disp</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>g2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mant</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>reintegrar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>e1</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="s" name="Solicitud de equipo recibida"><bpmn:outgoing>Flow_equipos_campo_1</bpmn:outgoing><bpmn:messageEventDefinition id="MED_s" messageRef="Message_SolicitudEquipo" /></bpmn:startEvent>
+    <bpmn:serviceTask id="verificar" name="Consultar disponibilidad en el inventario de equipos" camunda:delegateExpression="${equiposDelegate}"><bpmn:extensionElements><camunda:inputOutput><camunda:inputParameter name="accion">consultar</camunda:inputParameter></camunda:inputOutput></bpmn:extensionElements><bpmn:incoming>Flow_equipos_campo_1</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_2</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="g1" name="¿Equipo disponible?" default="Flow_equipos_campo_4"><bpmn:incoming>Flow_equipos_campo_2</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_3</bpmn:outgoing><bpmn:outgoing>Flow_equipos_campo_4</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:userTask id="asignar" name="Asignar el equipo y diligenciar el acta de entrega" camunda:formRef="eq_acta_entrega" camunda:formRefBinding="deployment" camunda:candidateGroups="administracion"><bpmn:incoming>Flow_equipos_campo_3</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_6</bpmn:outgoing></bpmn:userTask>
+    <bpmn:serviceTask id="constancia" name="Generar constancia del acta (JavaScript)" camunda:type="external" camunda:topic="constancia-acta-equipo"><bpmn:incoming>Flow_equipos_campo_6</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_7</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:userTask id="informar" name="Informar la indisponibilidad" camunda:formRef="seguimiento" camunda:formRefBinding="deployment" camunda:candidateGroups="administracion"><bpmn:incoming>Flow_equipos_campo_4</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_5</bpmn:outgoing></bpmn:userTask>
+    <bpmn:endEvent id="e0" name="Solicitud no atendida"><bpmn:incoming>Flow_equipos_campo_5</bpmn:incoming></bpmn:endEvent>
+    <bpmn:parallelGateway id="a1"><bpmn:incoming>Flow_equipos_campo_7</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_8</bpmn:outgoing><bpmn:outgoing>Flow_equipos_campo_9</bpmn:outgoing></bpmn:parallelGateway>
+    <bpmn:serviceTask id="registrar" name="Registrar la asignación y actualizar el inventario" camunda:delegateExpression="${equiposDelegate}"><bpmn:extensionElements><camunda:inputOutput><camunda:inputParameter name="accion">asignar</camunda:inputParameter></camunda:inputOutput></bpmn:extensionElements><bpmn:incoming>Flow_equipos_campo_9</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_11</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:manualTask id="entregar" name="Entregar el equipo al cliente o vendedor"><bpmn:incoming>Flow_equipos_campo_8</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_10</bpmn:outgoing></bpmn:manualTask>
+    <bpmn:parallelGateway id="a2"><bpmn:incoming>Flow_equipos_campo_10</bpmn:incoming><bpmn:incoming>Flow_equipos_campo_11</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_12</bpmn:outgoing></bpmn:parallelGateway>
+    <bpmn:eventBasedGateway id="eb"><bpmn:incoming>Flow_equipos_campo_12</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_13</bpmn:outgoing><bpmn:outgoing>Flow_equipos_campo_14</bpmn:outgoing></bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="vence" name="Vence la asignación"><bpmn:documentation>Plazo configurable en application.yaml (agua.plazos.asignacion). Valor propuesto para operación: P30D.</bpmn:documentation><bpmn:incoming>Flow_equipos_campo_13</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_16</bpmn:outgoing><bpmn:timerEventDefinition id="TED_vence"><bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${plazoAsignacion}</bpmn:timeDuration></bpmn:timerEventDefinition></bpmn:intermediateCatchEvent>
+    <bpmn:intermediateCatchEvent id="devol" name="Cliente o vendedor solicita la devolución"><bpmn:incoming>Flow_equipos_campo_14</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_15</bpmn:outgoing><bpmn:messageEventDefinition id="MED_devol" messageRef="Message_DevolucionEquipo" /></bpmn:intermediateCatchEvent>
+    <bpmn:exclusiveGateway id="g4"><bpmn:incoming>Flow_equipos_campo_15</bpmn:incoming><bpmn:incoming>Flow_equipos_campo_16</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_17</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:manualTask id="recibir" name="Recibir el equipo devuelto"><bpmn:incoming>Flow_equipos_campo_17</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_18</bpmn:outgoing></bpmn:manualTask>
+    <bpmn:userTask id="estado" name="Verificar el estado del equipo y firmar el acta de devolución" camunda:formRef="eq_acta_devolucion" camunda:formRefBinding="deployment" camunda:candidateGroups="bodega"><bpmn:incoming>Flow_equipos_campo_18</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_19</bpmn:outgoing></bpmn:userTask>
+    <bpmn:businessRuleTask id="disp" name="Definir la disposición del equipo" camunda:resultVariable="disposicion" camunda:decisionRef="disposicion_equipo" camunda:decisionRefBinding="deployment" camunda:mapDecisionResult="singleEntry"><bpmn:incoming>Flow_equipos_campo_19</bpmn:incoming><bpmn:incoming>Flow_equipos_campo_23</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_20</bpmn:outgoing></bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="g2" name="¿Requiere mantenimiento?" default="Flow_equipos_campo_22"><bpmn:incoming>Flow_equipos_campo_20</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_21</bpmn:outgoing><bpmn:outgoing>Flow_equipos_campo_22</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:callActivity id="mant" name="Realizar el mantenimiento del equipo" calledElement="mantenimiento_equipo" camunda:calledElementBinding="deployment"><bpmn:extensionElements><camunda:in variables="all" /><camunda:out variables="all" /></bpmn:extensionElements><bpmn:incoming>Flow_equipos_campo_21</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_23</bpmn:outgoing></bpmn:callActivity>
+    <bpmn:serviceTask id="reintegrar" name="Registrar la devolución y reintegrar al inventario" camunda:delegateExpression="${equiposDelegate}"><bpmn:extensionElements><camunda:inputOutput><camunda:inputParameter name="accion">reintegrar</camunda:inputParameter></camunda:inputOutput></bpmn:extensionElements><bpmn:incoming>Flow_equipos_campo_22</bpmn:incoming><bpmn:outgoing>Flow_equipos_campo_24</bpmn:outgoing></bpmn:serviceTask>
+    <bpmn:endEvent id="e1" name="Acta de devolución firmada e inventario actualizado"><bpmn:incoming>Flow_equipos_campo_24</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_equipos_campo_1" sourceRef="s" targetRef="verificar" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_2" sourceRef="verificar" targetRef="g1" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_3" name="Sí" sourceRef="g1" targetRef="asignar"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${equipoDisponible}</bpmn:conditionExpression></bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_equipos_campo_4" name="No" sourceRef="g1" targetRef="informar" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_5" sourceRef="informar" targetRef="e0" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_6" sourceRef="asignar" targetRef="constancia" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_7" sourceRef="constancia" targetRef="a1" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_8" sourceRef="a1" targetRef="entregar" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_9" sourceRef="a1" targetRef="registrar" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_10" sourceRef="entregar" targetRef="a2" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_11" sourceRef="registrar" targetRef="a2" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_12" sourceRef="a2" targetRef="eb" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_13" sourceRef="eb" targetRef="vence" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_14" sourceRef="eb" targetRef="devol" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_15" sourceRef="devol" targetRef="g4" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_16" sourceRef="vence" targetRef="g4" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_17" sourceRef="g4" targetRef="recibir" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_18" sourceRef="recibir" targetRef="estado" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_19" sourceRef="estado" targetRef="disp" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_20" sourceRef="disp" targetRef="g2" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_21" name="Sí" sourceRef="g2" targetRef="mant"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${disposicion == 'MANTENIMIENTO'}</bpmn:conditionExpression></bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_equipos_campo_22" name="No" sourceRef="g2" targetRef="reintegrar" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_23" sourceRef="mant" targetRef="disp" />
+    <bpmn:sequenceFlow id="Flow_equipos_campo_24" sourceRef="reintegrar" targetRef="e1" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_equipos_campo">
+    <bpmndi:BPMNPlane id="Plane_equipos_campo" bpmnElement="Collab_equipos_campo">
+      <bpmndi:BPMNShape id="Participant_equipos_campo_di" bpmnElement="Participant_equipos_campo" isHorizontal="true"><dc:Bounds x="160" y="80" width="3150" height="464" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Pla_di" bpmnElement="Lane_Pla" isHorizontal="true"><dc:Bounds x="190" y="80" width="3120" height="232" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Tec_di" bpmnElement="Lane_Tec" isHorizontal="true"><dc:Bounds x="190" y="312" width="3120" height="232" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="s_di" bpmnElement="s"><dc:Bounds x="277" y="122" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="317" y="144" width="90" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="verificar_di" bpmnElement="verificar"><dc:Bounds x="410" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="g1_di" bpmnElement="g1" isMarkerVisible="true"><dc:Bounds x="630" y="115" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="505" y="84" width="135" height="34" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="asignar_di" bpmnElement="asignar"><dc:Bounds x="770" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="constancia_di" bpmnElement="constancia"><dc:Bounds x="950" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="informar_di" bpmnElement="informar"><dc:Bounds x="770" y="212" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="e0_di" bpmnElement="e0"><dc:Bounds x="997" y="234" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="960" y="272" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="a1_di" bpmnElement="a1"><dc:Bounds x="1170" y="347" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="registrar_di" bpmnElement="registrar"><dc:Bounds x="1310" y="332" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="entregar_di" bpmnElement="entregar"><dc:Bounds x="1310" y="444" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="a2_di" bpmnElement="a2"><dc:Bounds x="1530" y="347" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="eb_di" bpmnElement="eb"><dc:Bounds x="1710" y="347" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="vence_di" bpmnElement="vence"><dc:Bounds x="1897" y="354" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1860" y="392" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="devol_di" bpmnElement="devol"><dc:Bounds x="1897" y="466" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1787" y="490" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="g4_di" bpmnElement="g4" isMarkerVisible="true"><dc:Bounds x="2070" y="347" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="recibir_di" bpmnElement="recibir"><dc:Bounds x="2210" y="332" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="estado_di" bpmnElement="estado"><dc:Bounds x="2390" y="332" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="disp_di" bpmnElement="disp"><dc:Bounds x="2570" y="332" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="g2_di" bpmnElement="g2" isMarkerVisible="true"><dc:Bounds x="2790" y="347" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="2665" y="316" width="135" height="34" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="mant_di" bpmnElement="mant"><dc:Bounds x="2930" y="332" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="reintegrar_di" bpmnElement="reintegrar"><dc:Bounds x="2930" y="444" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="e1_di" bpmnElement="e1"><dc:Bounds x="3157" y="354" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="3120" y="392" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_1_di" bpmnElement="Flow_equipos_campo_1"><di:waypoint x="313" y="140" /><di:waypoint x="410" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_2_di" bpmnElement="Flow_equipos_campo_2"><di:waypoint x="540" y="140" /><di:waypoint x="630" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_3_di" bpmnElement="Flow_equipos_campo_3"><di:waypoint x="680" y="140" /><di:waypoint x="770" y="140" /><bpmndi:BPMNLabel><dc:Bounds x="686" y="122" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_4_di" bpmnElement="Flow_equipos_campo_4"><di:waypoint x="655" y="165" /><di:waypoint x="655" y="252" /><di:waypoint x="770" y="252" /><bpmndi:BPMNLabel><dc:Bounds x="663" y="234" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_5_di" bpmnElement="Flow_equipos_campo_5"><di:waypoint x="900" y="252" /><di:waypoint x="997" y="252" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_6_di" bpmnElement="Flow_equipos_campo_6"><di:waypoint x="900" y="140" /><di:waypoint x="950" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_7_di" bpmnElement="Flow_equipos_campo_7"><di:waypoint x="1080" y="140" /><di:waypoint x="1125" y="140" /><di:waypoint x="1125" y="372" /><di:waypoint x="1170" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_8_di" bpmnElement="Flow_equipos_campo_8"><di:waypoint x="1195" y="397" /><di:waypoint x="1195" y="484" /><di:waypoint x="1310" y="484" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_9_di" bpmnElement="Flow_equipos_campo_9"><di:waypoint x="1220" y="372" /><di:waypoint x="1310" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_10_di" bpmnElement="Flow_equipos_campo_10"><di:waypoint x="1440" y="484" /><di:waypoint x="1485" y="484" /><di:waypoint x="1485" y="372" /><di:waypoint x="1530" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_11_di" bpmnElement="Flow_equipos_campo_11"><di:waypoint x="1440" y="372" /><di:waypoint x="1530" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_12_di" bpmnElement="Flow_equipos_campo_12"><di:waypoint x="1580" y="372" /><di:waypoint x="1710" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_13_di" bpmnElement="Flow_equipos_campo_13"><di:waypoint x="1760" y="372" /><di:waypoint x="1897" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_14_di" bpmnElement="Flow_equipos_campo_14"><di:waypoint x="1735" y="397" /><di:waypoint x="1735" y="484" /><di:waypoint x="1897" y="484" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_15_di" bpmnElement="Flow_equipos_campo_15"><di:waypoint x="1933" y="484" /><di:waypoint x="2001" y="484" /><di:waypoint x="2001" y="372" /><di:waypoint x="2070" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_16_di" bpmnElement="Flow_equipos_campo_16"><di:waypoint x="1933" y="372" /><di:waypoint x="2070" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_17_di" bpmnElement="Flow_equipos_campo_17"><di:waypoint x="2120" y="372" /><di:waypoint x="2210" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_18_di" bpmnElement="Flow_equipos_campo_18"><di:waypoint x="2340" y="372" /><di:waypoint x="2390" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_19_di" bpmnElement="Flow_equipos_campo_19"><di:waypoint x="2520" y="372" /><di:waypoint x="2570" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_20_di" bpmnElement="Flow_equipos_campo_20"><di:waypoint x="2700" y="372" /><di:waypoint x="2790" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_21_di" bpmnElement="Flow_equipos_campo_21"><di:waypoint x="2840" y="372" /><di:waypoint x="2930" y="372" /><bpmndi:BPMNLabel><dc:Bounds x="2846" y="354" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_22_di" bpmnElement="Flow_equipos_campo_22"><di:waypoint x="2815" y="397" /><di:waypoint x="2815" y="484" /><di:waypoint x="2930" y="484" /><bpmndi:BPMNLabel><dc:Bounds x="2823" y="466" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_23_di" bpmnElement="Flow_equipos_campo_23"><di:waypoint x="2995" y="412" /><di:waypoint x="2995" y="424" /><di:waypoint x="2635" y="424" /><di:waypoint x="2635" y="412" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_equipos_campo_24_di" bpmnElement="Flow_equipos_campo_24"><di:waypoint x="3060" y="484" /><di:waypoint x="3108" y="484" /><di:waypoint x="3108" y="372" /><di:waypoint x="3157" y="372" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Ext_Sol_di" bpmnElement="Ext_Sol" isHorizontal="true"><dc:Bounds x="160" y="614" width="3150" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Msg_equipos_campo_1_di" bpmnElement="Msg_equipos_campo_1"><di:waypoint x="281" y="614" /><di:waypoint x="281" y="158" /><bpmndi:BPMNLabel><dc:Bounds x="286" y="592" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Msg_equipos_campo_2_di" bpmnElement="Msg_equipos_campo_2"><di:waypoint x="855" y="292" /><di:waypoint x="855" y="614" /><bpmndi:BPMNLabel><dc:Bounds x="860" y="592" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Msg_equipos_campo_3_di" bpmnElement="Msg_equipos_campo_3"><di:waypoint x="1395" y="524" /><di:waypoint x="1395" y="614" /><bpmndi:BPMNLabel><dc:Bounds x="1400" y="592" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Msg_equipos_campo_4_di" bpmnElement="Msg_equipos_campo_4"><di:waypoint x="1901" y="614" /><di:waypoint x="1901" y="502" /><bpmndi:BPMNLabel><dc:Bounds x="1906" y="592" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

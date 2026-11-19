@@ -1,0 +1,52 @@
+{
+  "id": "dist_comprobante",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "1.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Entregar al cliente y registrar el comprobante"
+    },
+    {
+      "key": "pedidoId",
+      "label": "Pedido",
+      "type": "textfield",
+      "id": "Field_pedidoId",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "key": "clienteId",
+      "label": "Cliente",
+      "type": "textfield",
+      "id": "Field_clienteId",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "key": "zona",
+      "label": "Zona y dirección",
+      "type": "textfield",
+      "id": "Field_zona",
+      "validate": {},
+      "disabled": true
+    },
+    {
+      "key": "comprobanteEntrega",
+      "label": "Acta o comprobante de entrega (cliente, zona, lote y cantidad)",
+      "type": "textfield",
+      "id": "Field_comprobanteEntrega",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "ENT-001"
+    }
+  ]
+}

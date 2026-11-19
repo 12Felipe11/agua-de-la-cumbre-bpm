@@ -1,0 +1,55 @@
+{
+  "id": "env_recepcion",
+  "type": "default",
+  "schemaVersion": 16,
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "exporter": {
+    "name": "Agua de la Cumbre BPM",
+    "version": "3.0.0"
+  },
+  "components": [
+    {
+      "type": "text",
+      "id": "Title",
+      "text": "## Recibir y contar los envases vacíos"
+    },
+    {
+      "key": "pedidoId",
+      "label": "Pedido",
+      "type": "textfield",
+      "disabled": true,
+      "id": "Field_pedidoId",
+      "validate": {}
+    },
+    {
+      "key": "clienteId",
+      "label": "Distribuidor",
+      "type": "textfield",
+      "disabled": true,
+      "id": "Field_clienteId",
+      "validate": {}
+    },
+    {
+      "key": "envasesVacios",
+      "label": "Envases vacíos recibidos",
+      "type": "number",
+      "decimalDigits": 0,
+      "increment": "1",
+      "validate": {
+        "required": true,
+        "min": 1
+      },
+      "id": "Field_envasesVacios",
+      "defaultValue": 2
+    },
+    {
+      "key": "observacionesEnvases",
+      "label": "Observaciones del estado de los envases",
+      "type": "textarea",
+      "id": "Field_observacionesEnvases",
+      "validate": {},
+      "defaultValue": "Envases vacíos en buen estado"
+    }
+  ]
+}

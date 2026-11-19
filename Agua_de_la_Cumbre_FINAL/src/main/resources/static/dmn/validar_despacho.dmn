@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Def_validar_despacho" name="Validar lote liberado, vigente y existencias" namespace="https://aguacumbre.example/dmn">
+  <decision id="validar_despacho" name="Validar lote liberado, vigente y existencias" camunda:historyTimeToLive="180">
+    <description>Adaptada de autorizar_liberacion (calidadAprobada, loteExiste, loteVigente) para el momento del despacho.</description>
+    <decisionTable id="Table_validar_despacho" hitPolicy="UNIQUE">
+      <input id="validar_despacho_in0" label="Lote liberado (PR-AC-PT-004)"><inputExpression id="validar_despacho_expr0" typeRef="boolean"><text>loteLiberado</text></inputExpression></input>
+      <input id="validar_despacho_in1" label="Lote vigente (no vencido)"><inputExpression id="validar_despacho_expr1" typeRef="boolean"><text>loteVigente</text></inputExpression></input>
+      <input id="validar_despacho_in2" label="Existencias suficientes"><inputExpression id="validar_despacho_expr2" typeRef="boolean"><text>existencias &gt;= cantidad</text></inputExpression></input>
+      <output id="validar_despacho_out" label="Resultado" name="despacho" typeRef="string" />
+      <rule id="validar_despacho_rule0">
+        <description>Solo se despacha producto liberado, vigente y con existencias</description>
+        <inputEntry id="validar_despacho_r0i0"><text>true</text></inputEntry>
+        <inputEntry id="validar_despacho_r0i1"><text>true</text></inputEntry>
+        <inputEntry id="validar_despacho_r0i2"><text>true</text></inputEntry>
+        <outputEntry id="validar_despacho_r0o"><text>"DESPACHAR"</text></outputEntry>
+      </rule>
+      <rule id="validar_despacho_rule1">
+        <description>Lote liberado y vigente pero sin existencias suficientes: esperar nuevo lote</description>
+        <inputEntry id="validar_despacho_r1i0"><text>true</text></inputEntry>
+        <inputEntry id="validar_despacho_r1i1"><text>true</text></inputEntry>
+        <inputEntry id="validar_despacho_r1i2"><text>false</text></inputEntry>
+        <outputEntry id="validar_despacho_r1o"><text>"ESPERAR"</text></outputEntry>
+      </rule>
+      <rule id="validar_despacho_rule2">
+        <description>Lote vencido: no se despacha, se remite a PR-CO-04</description>
+        <inputEntry id="validar_despacho_r2i0"><text>true</text></inputEntry>
+        <inputEntry id="validar_despacho_r2i1"><text>false</text></inputEntry>
+        <inputEntry id="validar_despacho_r2i2"><text>-</text></inputEntry>
+        <outputEntry id="validar_despacho_r2o"><text>"BLOQUEAR"</text></outputEntry>
+      </rule>
+      <rule id="validar_despacho_rule3">
+        <description>El lote aún no está liberado por Calidad: no se despacha</description>
+        <inputEntry id="validar_despacho_r3i0"><text>false</text></inputEntry>
+        <inputEntry id="validar_despacho_r3i1"><text>true</text></inputEntry>
+        <inputEntry id="validar_despacho_r3i2"><text>-</text></inputEntry>
+        <outputEntry id="validar_despacho_r3o"><text>"ESPERAR"</text></outputEntry>
+      </rule>
+      <rule id="validar_despacho_rule4">
+        <description>Lote no liberado y vencido: se bloquea</description>
+        <inputEntry id="validar_despacho_r4i0"><text>false</text></inputEntry>
+        <inputEntry id="validar_despacho_r4i1"><text>false</text></inputEntry>
+        <inputEntry id="validar_despacho_r4i2"><text>-</text></inputEntry>
+        <outputEntry id="validar_despacho_r4o"><text>"BLOQUEAR"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

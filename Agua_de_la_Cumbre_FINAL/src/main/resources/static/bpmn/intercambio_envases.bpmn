@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_intercambio_envases" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.52.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.24.0">
+  <bpmn:collaboration id="Collab_intercambio_envases">
+    <bpmn:participant id="Participant_intercambio_envases" name="PR-CO-03 (subproceso) Intercambiar envases con distribuidores" processRef="intercambio_envases" />
+  </bpmn:collaboration>
+  <bpmn:process id="intercambio_envases" name="Intercambiar envases con distribuidores" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:laneSet id="LaneSet_intercambio_envases">
+      <bpmn:lane id="Lane_Alm" name="Operario de Planta (Almacén)">
+        <bpmn:flowNodeRef>s</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>recibir</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>llenos</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>registrar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>e</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="s" name="Distribuidor entrega envases vacíos"><bpmn:outgoing>Flow_intercambio_envases_1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:userTask id="recibir" name="Recibir y contar los envases vacíos" camunda:formRef="env_recepcion" camunda:formRefBinding="deployment" camunda:candidateGroups="bodega"><bpmn:incoming>Flow_intercambio_envases_1</bpmn:incoming><bpmn:outgoing>Flow_intercambio_envases_2</bpmn:outgoing></bpmn:userTask>
+    <bpmn:manualTask id="llenos" name="Entregar envases llenos al distribuidor"><bpmn:incoming>Flow_intercambio_envases_2</bpmn:incoming><bpmn:outgoing>Flow_intercambio_envases_3</bpmn:outgoing></bpmn:manualTask>
+    <bpmn:userTask id="registrar" name="Registrar el intercambio (lote y cantidad)" camunda:formRef="env_registro" camunda:formRefBinding="deployment" camunda:candidateGroups="bodega"><bpmn:incoming>Flow_intercambio_envases_3</bpmn:incoming><bpmn:outgoing>Flow_intercambio_envases_4</bpmn:outgoing></bpmn:userTask>
+    <bpmn:endEvent id="e" name="Intercambio registrado"><bpmn:incoming>Flow_intercambio_envases_4</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_intercambio_envases_1" sourceRef="s" targetRef="recibir" />
+    <bpmn:sequenceFlow id="Flow_intercambio_envases_2" sourceRef="recibir" targetRef="llenos" />
+    <bpmn:sequenceFlow id="Flow_intercambio_envases_3" sourceRef="llenos" targetRef="registrar" />
+    <bpmn:sequenceFlow id="Flow_intercambio_envases_4" sourceRef="registrar" targetRef="e" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_intercambio_envases">
+    <bpmndi:BPMNPlane id="Plane_intercambio_envases" bpmnElement="Collab_intercambio_envases">
+      <bpmndi:BPMNShape id="Participant_intercambio_envases_di" bpmnElement="Participant_intercambio_envases" isHorizontal="true"><dc:Bounds x="160" y="80" width="990" height="190" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Alm_di" bpmnElement="Lane_Alm" isHorizontal="true"><dc:Bounds x="190" y="80" width="960" height="190" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="s_di" bpmnElement="s"><dc:Bounds x="277" y="122" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="240" y="160" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="recibir_di" bpmnElement="recibir"><dc:Bounds x="410" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="llenos_di" bpmnElement="llenos"><dc:Bounds x="590" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="registrar_di" bpmnElement="registrar"><dc:Bounds x="770" y="100" width="130" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="e_di" bpmnElement="e"><dc:Bounds x="997" y="122" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="960" y="160" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_intercambio_envases_1_di" bpmnElement="Flow_intercambio_envases_1"><di:waypoint x="313" y="140" /><di:waypoint x="410" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_intercambio_envases_2_di" bpmnElement="Flow_intercambio_envases_2"><di:waypoint x="540" y="140" /><di:waypoint x="590" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_intercambio_envases_3_di" bpmnElement="Flow_intercambio_envases_3"><di:waypoint x="720" y="140" /><di:waypoint x="770" y="140" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_intercambio_envases_4_di" bpmnElement="Flow_intercambio_envases_4"><di:waypoint x="900" y="140" /><di:waypoint x="997" y="140" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
